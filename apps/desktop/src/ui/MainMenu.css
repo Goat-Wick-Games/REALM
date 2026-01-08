@@ -1,0 +1,87 @@
+.MainMenu .overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 20%;
+  background-color: rgba(0, 162, 255, 0.3);
+}
+
+.MainMenu h1 {
+  animation: switch-color 6s ease-in-out infinite;
+  font-size: 4rem;
+  margin-bottom: 20px;
+  color: #48a4ff;
+}
+
+@keyframes switch-color {
+  0%,
+  5% {
+    color: #48a4ff;
+  }
+  10%,
+  20% {
+    color: #00ffff;
+  }
+  25%,
+  35% {
+    color: #0066cc;
+  }
+  40%,
+  50% {
+    color: #003366;
+  }
+  55%,
+  65% {
+    color: #48a4ff;
+  }
+  70%,
+  80% {
+    color: #00ffff;
+  }
+  85%,
+  95% {
+    color: #0066cc;
+  }
+  100% {
+    color: #48a4ff;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(200px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.MainMenu .overlay {
+  animation: fadeIn 1s ease-in-out;
+}
+
+.MainMenu button {
+  border: none;
+  border-left: solid #001830 40px;
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 2rem;
+  cursor: pointer;
+  min-width: 20rem;
+  background-color: #026dd8;
+  color: white;
+  border-radius: 0px 0px 20px;
+}
+
+.MainMenu button:disabled {
+  border: 2px solid #001830;
+  background: none !important;
+}
+.MainMenu button:hover:not(:disabled) {
+  background-color: #0d4a86;
+  border-left: solid #001830 10px;
+  transform: scale(1.1);
+}

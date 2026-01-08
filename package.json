@@ -1,0 +1,27 @@
+{
+  "name": "mythica",
+  "version": "0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:desktop": "concurrently \"pnpm dev:desktop\" \"wait-on http://localhost:5173 && electron ./apps/desktop/main.js\"",
+    "": "",
+    "dev:desktop": "pnpm --filter desktop dev",
+    "": "",
+    "build:desktop": "pnpm --filter desktop build",
+    "build:all": "pnpm -r run build && pnpm build:desktop",
+    "": "",
+    "lint:desktop": "pnpm --filter desktop lint",
+    "": "",
+    "preview:desktop": "pnpm --filter desktop preview",
+    "": "",
+    "clean:all": "rimraf packages/*/dist apps/desktop/dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.27.0",
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  }
+}
