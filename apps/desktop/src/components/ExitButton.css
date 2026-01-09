@@ -1,8 +1,8 @@
-.exit-button-container {
+.ExitButton {
   position: relative;
 }
 
-.exit-btn {
+.ExitButton .exit-btn {
   border: none;
   margin: 10px 0;
   padding: 12px 24px;
@@ -16,15 +16,15 @@
   transition: all 0.2s ease;
 }
 
-.exit-btn:hover {
+.ExitButton .exit-btn:hover {
   background-color: #2c2c2c;
   transform: scale(1.05);
 }
 
-.exit-popup {
+.ExitButton .exit-popup {
   position: absolute;
-  top: 0;
-  left: 300%;
+  bottom: -10vh;
+  left: 50vw;
   transform: translate(-50%, -50%);
   background-color: #1e1e1e;
   padding: 2rem;
@@ -34,20 +34,20 @@
   z-index: 100;
 }
 
-.exit-popup p {
+.ExitButton .exit-popup p {
   font-size: 1.6rem;
   margin-bottom: 1.5rem;
   color: #ffffff;
 }
 
-.popup-buttons {
+.ExitButton .popup-buttons {
   display: flex;
   justify-content: center;
   gap: 1rem;
 }
 
-.confirm-btn,
-.cancel-btn {
+.ExitButton .confirm-btn,
+.ExitButton .cancel-btn {
   border: none;
   padding: 10px 20px;
   font-size: 1.5rem;
@@ -56,20 +56,20 @@
   transition: all 0.2s ease;
 }
 
-.confirm-btn {
-  background-color: #b22222;
-  color: white;
-}
-
-.confirm-btn:hover {
-  background-color: #ff4c4c;
-}
-
-.cancel-btn {
-  background-color: #333333;
+.ExitButton .confirm-btn {
+  background-color: #b22222 !important;
   color: #ffffff;
 }
 
-.cancel-btn:hover {
-  background-color: #555555;
+.ExitButton .confirm-btn:hover {
+  background-color: #ff4c4c !important;
+}
+
+.ExitButton .cancel-btn {
+  background-color: #333333 !important;
+  color: #ffffff;
+}
+
+.ExitButton .cancel-btn:hover {
+  background-color: #555555 !important;
 }

@@ -1,22 +1,23 @@
 import React, { useState } from "react";
-//import { ipcRenderer } from "electron";
 import "./ExitButton.css";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 
 const ExitButton: React.FC = () => {
   const [confirm, setConfirm] = useState(false);
 
   const handleExit = async () => {
-    //await ipcRenderer.invoke("exit-app");
+    const appWindow = getCurrentWindow();
+    await appWindow.close();
   };
 
   const handleCancel = () => setConfirm(false);
 
   return (
-    <div className="exit-button-container">
+    <div className="ExitButton">
       <button
         title="Leave the application"
         className="exit-btn"
-        onClick={handleExit}
+        onClick={() => setConfirm(true)}
       >
         Exit
       </button>

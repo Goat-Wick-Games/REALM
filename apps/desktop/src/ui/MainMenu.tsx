@@ -1,6 +1,7 @@
 import ExitButton from "../components/ExitButton"; // wherever you put your exit function
 import React from "react";
 import "./MainMenu.css";
+import SettingsButton from "../components/SettingsButton";
 
 type MainMenuProps = {};
 
@@ -29,9 +30,7 @@ const MainMenu: React.FC<MainMenuProps> = () => {
         <button title="Create a brand new character you can play in others realms">
           Create Character
         </button>
-        <button title="Settings for the game, the client and the inner works">
-          Settings
-        </button>
+        <SettingsButton />
         <ExitButton />
       </div>
     </main>
