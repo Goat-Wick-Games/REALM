@@ -1,53 +1,64 @@
-.MainMenu .overlay {
+.MainMenu .Slash {
+  color: lightblue;
+  animation: slash-glow 5s infinite alternate;
+}
+
+.MainMenu .Overlay {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  width: 20%;
-  background-color: rgba(0, 162, 255, 0.3);
+  width: 25%;
+  background-color: rgba(20, 20, 20, 0.6);
+  border-radius: 12px;
+  animation: fadeIn 1s ease-in-out;
 }
 
 .MainMenu h1 {
-  animation: switch-color 6s ease-in-out infinite;
-  font-size: 4rem;
-  margin-bottom: 20px;
-  color: #48a4ff;
+  font-size: 5rem;
+  margin-bottom: 30px;
+  color: #7e7e7e;
+  position: relative;
+  text-shadow: #7e7e7e 0 5px 5px;
+  letter-spacing: 0.1em;
+  overflow: hidden;
 }
 
-@keyframes switch-color {
-  0%,
-  5% {
-    color: #48a4ff;
+@keyframes slash-glow {
+  from {
+    text-shadow: lightblue 0 5px 1px;
   }
-  10%,
-  20% {
-    color: #00ffff;
-  }
-  25%,
-  35% {
-    color: #0066cc;
-  }
-  40%,
-  50% {
-    color: #003366;
-  }
-  55%,
-  65% {
-    color: #48a4ff;
-  }
-  70%,
-  80% {
-    color: #00ffff;
-  }
-  85%,
-  95% {
-    color: #0066cc;
-  }
-  100% {
-    color: #48a4ff;
+  to {
+    text-shadow: lightblue 0 5px 20px;
   }
 }
+
+.MainMenu button {
+  border: none;
+  margin: 10px 0;
+  padding: 12px 24px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  min-width: 20rem;
+  background-color: #1e1e1e;
+  color: #ffffff;
+  border-left: solid 6px var(--accent-color);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.MainMenu button:hover:not(:disabled) {
+  background-color: #2c2c2c;
+  transform: scale(1.05);
+}
+
+.MainMenu button:disabled {
+  background-color: #333333;
+  color: #777777;
+  border-left: solid 6px #555555;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -57,31 +68,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.MainMenu .overlay {
-  animation: fadeIn 1s ease-in-out;
-}
-
-.MainMenu button {
-  border: none;
-  border-left: solid #001830 40px;
-  margin: 10px;
-  padding: 10px 20px;
-  font-size: 2rem;
-  cursor: pointer;
-  min-width: 20rem;
-  background-color: #026dd8;
-  color: white;
-  border-radius: 0px 0px 20px;
-}
-
-.MainMenu button:disabled {
-  border: 2px solid #001830;
-  background: none !important;
-}
-.MainMenu button:hover:not(:disabled) {
-  background-color: #0d4a86;
-  border-left: solid #001830 10px;
-  transform: scale(1.1);
 }

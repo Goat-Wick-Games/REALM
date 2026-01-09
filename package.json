@@ -1,10 +1,10 @@
 {
   "name": "mythica",
-  "version": "0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:desktop": "concurrently \"pnpm dev:desktop\" \"wait-on http://localhost:5173 && electron ./apps/desktop/main.js\"",
+    "start:desktop": "pnpm --filter desktop start",
     "": "",
     "dev:desktop": "pnpm --filter desktop dev",
     "": "",
