@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { ipcRenderer } from "electron";
+//import { ipcRenderer } from "electron";
 import "./ExitButton.css";
 
 const ExitButton: React.FC = () => {
   const [confirm, setConfirm] = useState(false);
 
   const handleExit = async () => {
-    await ipcRenderer.invoke("exit-app");
+    //await ipcRenderer.invoke("exit-app");
   };
 
   const handleCancel = () => setConfirm(false);
