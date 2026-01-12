@@ -1,0 +1,117 @@
+import { useEffect, useState } from 'react';
+import { AppStore } from '../storage';
+import { useTheme, type Theme } from '../theme/ThemeContext';
+
+const settings = new AppStore('settings.json');
+
+type SettingsPopupProps = {
+    closePopup: () => void;
+};
+
+const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
+    const { setTheme } = useTheme();
+    const { closePopup } = props;
+    const [music, setMusic] = useState<number>();
+    const [sound, setSound] = useState<number>();
+    const [innerTheme, setInnerTheme] = useState<Theme>();
+
+    useEffect(() => {
+        (async () => {
+            await settings.init();
+            setMusic((await settings.get('music')) || 50);
+            setSound((await settings.get('sound')) || 75);
+            setInnerTheme((await settings.get('theme'))!);
+        })();
+    }, []);
+
+    useEffect(() => {
+        settings.set('music', music);
+    }, [music]);
+
+    useEffect(() => {
+        settings.set('sound', sound);
+    }, [sound]);
+
+    return (
+        <div className="Popup settings">
+            <h2>Settings</h2>
+            <div className="fields">
+                <div className="theme">
+                    Theme:
+                    <select
+                        value={innerTheme}
+                        onChange={(e) => {
+                            setTheme(e.target.value as Theme);
+                            setInnerTheme(e.target.value as Theme);
+                        }}
+                    >
+                        <option value={'system'}>System</option>
+                        <option value={'dark'}>Dark</option>
+                        <option value={'light'}>Light</option>
+                    </select>
+                </div>
+                <div className="saveloc">
+                    <div>Save Location:</div>
+                    <code> FileService </code>
+                </div>
+                <div className="sounds">
+                    <div>Sounds:</div>
+                    <div>
+                        <input
+                            type="text"
+                            min="0"
+                            max="100"
+                            value={sound}
+                            onChange={(e) => {
+                                let val = Number(e.target.value);
+                                if (isNaN(val)) val = 0;
+                                if (val > 100) val = 100;
+                                if (val < 0) val = 0;
+                                setSound(val);
+                            }}
+                        />
+                        %
+                        <input
+                            value={sound}
+                            onChange={(e) => setSound(Number(e.target.value))}
+                            type="range"
+                            min="0"
+                            max="100"
+                        />
+                    </div>
+                </div>
+                <div className="music">
+                    Music:
+                    <div>
+                        <input
+                            type="text"
+                            min="0"
+                            max="100"
+                            value={music}
+                            onChange={(e) => {
+                                let val = Number(e.target.value);
+                                if (isNaN(val)) val = 0;
+                                if (val > 100) val = 100;
+                                if (val < 0) val = 0;
+                                setMusic(val);
+                            }}
+                        />
+                        %
+                        <input
+                            value={music}
+                            onChange={(e) => setMusic(Number(e.target.value))}
+                            type="range"
+                            min="0"
+                            max="100"
+                        />
+                    </div>
+                </div>
+            </div>
+            <button className="cancel-btn" onClick={closePopup}>
+                Back
+            </button>
+        </div>
+    );
+};
+
+export default SettingsPopup;
