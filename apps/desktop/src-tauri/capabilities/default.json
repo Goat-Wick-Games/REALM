@@ -3,5 +3,13 @@
     "identifier": "default",
     "description": "enables the default permissions",
     "windows": ["main"],
-    "permissions": ["core:default", "core:window:allow-close", "store:default"]
+    "permissions": [
+        "store:default",
+        "core:window:allow-set-decorations",
+        "core:window:allow-set-fullscreen",
+        "core:window:allow-unmaximize",
+        "core:window:allow-maximize",
+        "core:window:allow-close",
+        "core:default"
+    ]
 }

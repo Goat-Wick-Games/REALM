@@ -34,17 +34,17 @@
 }
 
 .layer-wall {
-    transform: translate(var(--wall-x, 0), var(--wall-y, 0)) scale(0.95);
+    transform: translate(var(--wall-x, 0), var(--wall-y, 0)) scale(1.1);
 }
 .layer-bartender {
-    transform: translate(var(--mid-x, 0), var(--mid-y, 0)) scale(0.95);
+    transform: translate(var(--mid-x, 0), var(--mid-y, 0)) scale(1.1);
 }
 .layer-bar {
-    transform: translate(var(--front-x, 0), var(--front-y, 0)) scale(0.95);
+    transform: translate(var(--front-x, 0), var(--front-y, 0)) scale(1.1);
 }
 
 .Sidebar {
-    width: 300px;
+    width: 400px;
     padding: 2rem;
     background-color: rgba(20, 20, 20, 0.8);
     display: flex;
@@ -54,7 +54,7 @@
 }
 
 .Sidebar h1 {
-    font-size: 4rem;
+    font-size: 5.5rem;
     margin-bottom: 2rem;
     color: #7e7e7e;
     text-shadow: #7e7e7e 0 0 5px;

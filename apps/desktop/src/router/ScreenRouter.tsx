@@ -1,32 +1,45 @@
-import { useState } from "react";
-import type { Screen } from "../types/screen";
-import IntroSmash from "../screens/IntroSmash";
-import MainMenu from "../ui/MainMenu";
+import { useState } from 'react';
+import type { Screen } from '../types/screen';
+import IntroSmash from '../screens/IntroSmash';
+import MainMenu from '../ui/MainMenu';
+import ManageCharacter from '../screens/ManageCharacter';
 
 const ScreenRouter: React.FC = () => {
-  const [screen, setScreen] = useState<Screen>("boot");
-  const [showMainMenu, setShowMainMenu] = useState<boolean>(false);
-  const [showIntro, setShowIntro] = useState<boolean>(true);
+    const [screen, setScreen] = useState<Screen>('manage character');
+    const [showMainMenu, setShowMainMenu] = useState<boolean>(false);
+    const [showIntro, setShowIntro] = useState<boolean>(true);
 
-  switch (screen) {
-    case "boot":
-      return (
-        <>
-          {showIntro && (
-            <IntroSmash
-              onDone={() => {
-                setShowMainMenu(true);
-                setTimeout(() => setShowIntro(false), 1000);
-                setScreen;
-              }}
-            />
-          )}
-          {showMainMenu && <MainMenu />}
-        </>
-      );
-    default:
-      return null;
-  }
+    const backToMainMenu = () => {
+        setShowIntro(false);
+        setShowMainMenu(true);
+        setScreen('menu');
+    };
+
+    switch (screen) {
+        case 'menu':
+            return (
+                <>
+                    {showIntro && (
+                        <IntroSmash
+                            onDone={() => {
+                                setShowMainMenu(true);
+                                setTimeout(() => setShowIntro(false), 1000);
+                            }}
+                        />
+                    )}
+                    {showMainMenu && (
+                        <MainMenu
+                            onManageCharacter={() => setScreen('manage character')}
+                            onManageRealm={() => setScreen('manage realm')}
+                        />
+                    )}
+                </>
+            );
+        case 'manage character':
+            return <ManageCharacter onBack={backToMainMenu} />;
+        default:
+            return null;
+    }
 };
 
 export default ScreenRouter;

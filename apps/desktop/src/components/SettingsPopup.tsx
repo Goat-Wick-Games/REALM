@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { AppStore } from '../storage';
 import { useTheme, type Theme } from '../theme/ThemeContext';
+import type { Display } from '../display';
+import { setDisplay } from '../display';
 
 const settings = new AppStore('settings.json');
 
@@ -14,6 +16,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
     const [music, setMusic] = useState<number>();
     const [sound, setSound] = useState<number>();
     const [innerTheme, setInnerTheme] = useState<Theme>();
+    const [innerDisplay, setInnerDisplay] = useState<Display>();
 
     useEffect(() => {
         (async () => {
@@ -21,6 +24,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
             setMusic((await settings.get('music')) || 50);
             setSound((await settings.get('sound')) || 75);
             setInnerTheme((await settings.get('theme'))!);
+            setInnerDisplay((await settings.get('display'))!);
         })();
     }, []);
 
@@ -36,6 +40,20 @@ const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
         <div className="Popup settings">
             <h2>Settings</h2>
             <div className="fields">
+                <div className="Display">
+                    Display:
+                    <select
+                        value={innerDisplay}
+                        onChange={(e) => {
+                            setDisplay(e.target.value as Display);
+                            setInnerDisplay(e.target.value as Display);
+                        }}
+                    >
+                        <option value={'fullscreen'}>Fullscreen</option>
+                        <option value={'windowed fullscreen'}>Windowed Fullscreen</option>
+                        <option value={'windowed'}>Windowed</option>
+                    </select>
+                </div>
                 <div className="theme">
                     Theme:
                     <select

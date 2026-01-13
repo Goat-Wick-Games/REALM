@@ -5,9 +5,15 @@ import SettingsPopup from '../components/SettingsPopup';
 import ExitPopup from '../components/ExitPopup';
 import { useTheme } from '../theme/ThemeContext';
 
-type menuTypes = 'host' | 'join' | 'create character' | 'create realm' | 'settings' | 'exit' | '';
+type menuTypes = 'host' | 'join' | 'manage character' | 'manage realm' | 'settings' | 'exit' | '';
 
-const MainMenu: React.FC = () => {
+type MainMenuProps = {
+    onManageRealm: () => void;
+    onManageCharacter: () => void;
+};
+
+const MainMenu: React.FC<MainMenuProps> = (props) => {
+    const { onManageCharacter, onManageRealm } = props;
     const [openMenu, setOpenMenu] = useState<menuTypes>('');
     const { theme } = useTheme();
 
@@ -23,7 +29,6 @@ const MainMenu: React.FC = () => {
     };
 
     const handleMouseMove = (e: React.MouseEvent) => {
-        console.log('move');
         const { innerWidth, innerHeight } = window;
 
         // normalize -1 → 1
@@ -32,13 +37,13 @@ const MainMenu: React.FC = () => {
 
         // update CSS variables
         const bg = document.querySelector('.MenuBackground') as HTMLElement;
-        bg.style.setProperty('--wall-x', `${x * 5}px`);
+        bg.style.setProperty('--wall-x', `${x * 5 * (16 / 9)}px`);
         bg.style.setProperty('--wall-y', `${y * 5}px`);
 
-        bg.style.setProperty('--mid-x', `${x * 12}px`);
+        bg.style.setProperty('--mid-x', `${x * 12 * (16 / 9)}px`);
         bg.style.setProperty('--mid-y', `${y * 12}px`);
 
-        bg.style.setProperty('--front-x', `${x * 20}px`);
+        bg.style.setProperty('--front-x', `${x * 20 * (16 / 9)}px`);
         bg.style.setProperty('--front-y', `${y * 20}px`);
     };
 
@@ -58,17 +63,37 @@ const MainMenu: React.FC = () => {
                     RE<span className="Slash">/\</span>LM
                 </h1>
 
-                <button disabled title="Start a campaign first">
+                <button disabled title="Start a Realm first">
                     Continue
                 </button>
                 <button disabled title="Work in Progress">
                     Tutorial
                 </button>
 
-                <button onClick={() => open('host')}>Host Realm</button>
-                <button onClick={() => open('join')}>Join Realm</button>
-                <button onClick={() => open('create realm')}>Create Realm</button>
-                <button onClick={() => open('create character')}>Create Character</button>
+                <button
+                    title="Host a Realm for you and your friends to enjoy with you being the Realmkeeper"
+                    onClick={() => open('host')}
+                >
+                    Host Realm
+                </button>
+                <button
+                    title="Join a Realm where your friend is the Realmkeeper and roleplay together"
+                    onClick={() => open('join')}
+                >
+                    Join Realm
+                </button>
+                <button
+                    title="Create a brand new Realm you can play with your friends or edit an existing Realm"
+                    onClick={() => onManageRealm()}
+                >
+                    Manage Realms
+                </button>
+                <button
+                    title="Create a brand new Character you can play or edit an existing Character"
+                    onClick={() => onManageCharacter()}
+                >
+                    Manage Characters
+                </button>
 
                 <button
                     className="Settings-btn"
@@ -88,6 +113,10 @@ const MainMenu: React.FC = () => {
             </div>
 
             {/* POPUPS */}
+            {openMenu === 'host' && <></>}
+
+            {openMenu === 'join' && <></>}
+
             {openMenu === 'settings' && <SettingsPopup closePopup={close} />}
 
             {openMenu === 'exit' && <ExitPopup closePopup={close} exitApp={handleExit} />}
