@@ -81,11 +81,14 @@ const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
                             max="100"
                             value={sound}
                             onChange={(e) => {
-                                let val = Number(e.target.value);
-                                if (isNaN(val)) val = 0;
-                                if (val > 100) val = 100;
-                                if (val < 0) val = 0;
-                                setSound(val);
+                                let val = e.target.value;
+                                val.toString().startsWith('0');
+                                val.toString().replace('0', '');
+                                let num = Number(val);
+                                if (isNaN(num)) num = 0;
+                                if (num > 1000) num = 1000;
+                                if (num < 0) num = 0;
+                                setSound(num);
                             }}
                         />
                         %
@@ -107,11 +110,14 @@ const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
                             max="100"
                             value={music}
                             onChange={(e) => {
-                                let val = Number(e.target.value);
-                                if (isNaN(val)) val = 0;
-                                if (val > 100) val = 100;
-                                if (val < 0) val = 0;
-                                setMusic(val);
+                                let val = e.target.value;
+                                val.toString().startsWith('0');
+                                val.toString().replace('0', '');
+                                let num = Number(val);
+                                if (isNaN(num)) num = 0;
+                                if (num > 1000) num = 1000;
+                                if (num < 0) num = 0;
+                                setMusic(num);
                             }}
                         />
                         %

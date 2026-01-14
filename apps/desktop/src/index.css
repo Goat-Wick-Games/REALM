@@ -1,25 +1,52 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  width: 100vw !important;
-  margin: 0 !important;
-  font-synthesis: none;
-  line-height: 1.5;
-  font-weight: 400;
-  min-height: 100vh;
-  background-color: #2e2e2e;
-  color: white;
-  overflow: hidden;
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    width: 100vw !important;
+    margin: 0 !important;
+    font-synthesis: none;
+    line-height: 1.5;
+    font-weight: 400;
+    min-height: 100vh;
+    overflow: hidden;
 }
 
 body,
 #root {
-  background-color: var(--bg-color);
-  color: rgb(var(--text-primary));
-  margin: 0 !important;
+    margin: 0 !important;
 }
+body {
+    background-color: rgb(var(--bg-color));
+}
+
 * {
-  transition: all 0.1s;
+    transition: all 0.1s;
+    text-align: center;
+}
+
+/* ---------- DEFAULT (light) ---------- */
+:root {
+    --bg-color: 245, 245, 245;
+    --panel-bg: #1e1e1e;
+    --text-primary: 20 20 20;
+    --text-secondary: 230 230 230;
+
+    --btn-bg: #dfdfdf;
+    --btn-bg-hover: #cacaca;
+
+    --overlay: #ffffff;
+}
+
+/* ---------- DARK ---------- */
+:root[data-theme='dark'] {
+    --bg-color: 46, 46, 46;
+    --panel-bg: #ffffff;
+    --text-primary: 230 230 230;
+    --text-secondary: 20 20 20;
+
+    --btn-bg: #4e4e4e;
+    --btn-bg-hover: #2e2e2e;
+
+    --overlay: #1e1e1e;
 }

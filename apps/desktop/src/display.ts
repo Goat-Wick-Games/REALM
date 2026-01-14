@@ -26,14 +26,14 @@ const changeWindow = async (display: Display) => {
             break;
 
         case 'windowed fullscreen':
-            await win.maximize();
             await win.setFullscreen(false);
+            await win.maximize();
             await win.setDecorations(false);
             break;
 
         case 'windowed':
-            await win.unmaximize();
             await win.setFullscreen(false);
+            await win.unmaximize();
             await win.setDecorations(true);
             break;
     }

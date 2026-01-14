@@ -33,6 +33,10 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         })();
     }, []);
 
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+    }, [theme]);
+
     const setTheme = (t: Theme) => {
         const resolved = t === 'system' ? resolveSystemTheme() : t;
         setThemeState(resolved);
