@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useTheme } from '../theme/ThemeContext';
 import './IntroSmash.css';
-import { loadDisplay } from '../display';
 
 type IntroSmashProps = { onDone: () => void };
 
@@ -23,7 +22,6 @@ const IntroSmash: React.FC<IntroSmashProps> = ({ onDone }) => {
     const { theme } = useTheme();
 
     useEffect(() => {
-        loadDisplay();
         if (!theme) return; // wait for context
 
         const canvas = canvasRef.current!;

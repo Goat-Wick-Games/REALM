@@ -13,7 +13,9 @@ export const setDisplay = async (display: Display) => {
 
 export const loadDisplay = async () => {
     await settings.init();
+    console.log('display setting');
     const display: Display = (await settings.get('display')) ?? 'windowed';
+    console.log(display);
     changeWindow(display);
 };
 

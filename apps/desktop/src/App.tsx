@@ -1,7 +1,9 @@
-import ScreenRouter from "./router/ScreenRouter";
+import { loadDisplay } from './display';
+import ScreenRouter from './router/ScreenRouter';
 
 const App: React.FC = () => {
-  return <ScreenRouter />;
+    loadDisplay();
+    return <ScreenRouter />;
 };
 
 export default App;

@@ -19,3 +19,39 @@
 > ## Magnetism
 >
 > Your force of personality and social pull. Influences persuasion, leadership, intimidation, deception, and how strongly others are drawn to you.
+
+# SCORES
+
+> ## BASE
+>
+> -   1: Non-existent
+> -   2: Slight
+> -   3: Bad
+> -   4: Broken
+> -   5: Basic
+> -   6: Good
+> -   7: Skilled
+> -   8: Advanced
+> -   9: Expert
+> -   10: Master
+
+> ## CLASS
+>
+> -   1: Non-existent
+> -   2: Slight
+> -   3: Bad
+> -   4: Broken
+> -   5: Basic
+> -   6: Good
+> -   7: Skilled
+> -   8: Advanced
+> -   9: Expert
+> -   10: Master
+
+> ## OVERFLOW
+>
+> -   10-12: Master
+> -   12-14: Grand-Master
+> -   14-16: REALM-Master
+> -   16-18: Co-Originator
+> -   18-20: Originator

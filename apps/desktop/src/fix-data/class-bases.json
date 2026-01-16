@@ -1,0 +1,52 @@
+{
+    "barbarian": {
+        "lore": "",
+        "traits": {
+            "Reflexes": -2,
+            "Endurance": 10,
+            "Acumen": 2,
+            "Legerity": 1,
+            "Magnetism": 4
+        }
+    },
+    "druid": {
+        "lore": "",
+        "traits": {
+            "Reflexes": 6,
+            "Endurance": 0,
+            "Acumen": 8,
+            "Legerity": 3,
+            "Magnetism": -2
+        }
+    },
+    "assassin": {
+        "lore": "",
+        "traits": {
+            "Reflexes": 8,
+            "Endurance": -3,
+            "Acumen": 6,
+            "Legerity": 6,
+            "Magnetism": -2
+        }
+    },
+    "hunter": {
+        "lore": "",
+        "traits": {
+            "Reflexes": 6,
+            "Endurance": 4,
+            "Acumen": 1,
+            "Legerity": 6,
+            "Magnetism": -2
+        }
+    },
+    "craftsman": {
+        "lore": "",
+        "traits": {
+            "Reflexes": -3,
+            "Endurance": -3,
+            "Acumen": 8,
+            "Legerity": 9,
+            "Magnetism": 4
+        }
+    }
+}

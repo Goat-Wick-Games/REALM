@@ -1,0 +1,57 @@
+{
+    "orc": {
+        "maxAge": 50,
+        "lore": "Orcs were once the rulers of their world, but after the REALM LORD took them in they found a new home here",
+        "traits": {
+            "Reflexes": 4,
+            "Endurance": 10,
+            "Acumen": 4,
+            "Legerity": 4,
+            "Magnetism": 8
+        }
+    },
+    "elf": {
+        "maxAge": 750,
+        "lore": "Elves are in tune with nature and close to magic, they rule the mystical parts of REALM under the LORD",
+        "traits": {
+            "Reflexes": 5,
+            "Endurance": 4,
+            "Acumen": 8,
+            "Legerity": 6,
+            "Magnetism": 7
+        }
+    },
+    "human": {
+        "maxAge": 90,
+        "lore": "Humans wandered into the REALM accidentally all thanks to curiosity, they are now devoted to the REALM LORD",
+        "traits": {
+            "Reflexes": 6,
+            "Endurance": 6,
+            "Acumen": 5,
+            "Legerity": 7,
+            "Magnetism": 6
+        }
+    },
+    "fiend": {
+        "maxAge": -1,
+        "lore": "Fiends invaded the REALM, most of them are still hostile but a few have made a deal with the REALM LORD",
+        "traits": {
+            "Reflexes": 5,
+            "Endurance": 10,
+            "Acumen": 7,
+            "Legerity": 5,
+            "Magnetism": 3
+        }
+    },
+    "cyborg": {
+        "maxAge": 200,
+        "lore": "Cyborgs are the technically advanced humans, they were made in the REALM by the LORD to upkeep peace in times of need",
+        "traits": {
+            "Reflexes": 7,
+            "Endurance": 7,
+            "Acumen": 7,
+            "Legerity": 7,
+            "Magnetism": 2
+        }
+    }
+}
