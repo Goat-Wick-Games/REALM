@@ -6,4 +6,5 @@ type Character = {
     age: number;
     bio: string;
     createdAt: string;
+    lastPlayed: string;
 };

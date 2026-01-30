@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AppStore } from '../storage';
 import { useTheme, type Theme } from '../theme/ThemeContext';
 import type { Display } from '../display';
 import { setDisplay } from '../display';
-
-const settings = new AppStore('settings.json');
+import { toast } from 'react-toastify';
 
 type SettingsPopupProps = {
     closePopup: () => void;
 };
 
 const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
+    const settings = useRef(new AppStore('settings.json')).current;
     const { setTheme } = useTheme();
     const { closePopup } = props;
     const [music, setMusic] = useState<number>();
@@ -25,6 +25,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
             setSound((await settings.get('sound')) || 75);
             setInnerTheme((await settings.get('theme'))!);
             setInnerDisplay((await settings.get('display'))!);
+            toast.info('Settings loaded');
         })();
     }, []);
 

@@ -44,7 +44,7 @@
         }
     },
     "cyborg": {
-        "maxAge": 200,
+        "maxAge": 2000,
         "lore": "Cyborgs are the technically advanced humans, they were made in the REALM by the LORD to upkeep peace in times of need",
         "traits": {
             "Reflexes": 7,

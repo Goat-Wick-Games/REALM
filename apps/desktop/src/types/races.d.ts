@@ -1,1 +1,1 @@
-type Races = 'orc' | 'elf' | 'human' | 'fiend' | 'cyborg';
+type Races = 'orc' | 'elf' | 'human' | 'fiend' | 'cyborg' | '';

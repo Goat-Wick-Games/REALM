@@ -1,0 +1,144 @@
+/* ===============================
+   FULLSCREEN BACKGROUND
+================================ */
+.CharacterSelect {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+    align-items: center;
+
+    /* uses your bg variable */
+    background: rgba(var(--bg-color), 0.7);
+    font-family: 'Trebuchet MS', sans-serif;
+}
+
+/* ===============================
+   MAIN MENU PANEL
+================================ */
+.CharacterSelect .Panel {
+    width: 800px;
+    max-height: 85vh;
+    padding: 22px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    overflow-y: auto;
+
+    /* game-like panel */
+    background: var(--panel-bg);
+    border-radius: 12px;
+
+    /* chunky layered border like game UI */
+    box-shadow:
+        0 0 0 4px var(--overlay),
+        0 0 0 8px rgba(0, 0, 0, 0.4),
+        0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ===============================
+   CHARACTER SLOT (save slot)
+================================ */
+.CharacterSelect .Slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 14px;
+    border-radius: 8px;
+    width: 25%;
+
+    background: var(--btn-bg);
+    border: 2px solid rgba(0, 0, 0, 0.25);
+
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s ease;
+}
+
+/* Hover = "pressable" game button */
+.CharacterSelect .Slot:hover {
+    background: var(--btn-bg-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* Click press feel */
+.CharacterSelect .Slot:active {
+    transform: translateY(1px);
+}
+
+/* ===============================
+   AVATAR
+================================ */
+.CharacterSelect .Avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    image-rendering: pixelated;
+    border-radius: 6px;
+    background: var(--overlay);
+    border: 2px solid rgba(0, 0, 0, 0.4);
+    color: rgb(var(--text-primary));
+}
+.CharacterSelect .Avatar.Add {
+    font-size: 3rem;
+}
+
+/* ===============================
+   TEXT AREA
+================================ */
+.CharacterSelect .Info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.CharacterSelect .Name {
+    font-size: 18px;
+    font-weight: bold;
+    color: rgb(var(--text-primary));
+}
+
+.CharacterSelect .Meta {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    color: rgb(var(--text-primary));
+    opacity: 0.7;
+}
+
+/* ===============================
+   SCROLLBAR (optional polish)
+================================ */
+.CharacterSelect .Panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.CharacterSelect .Panel::-webkit-scrollbar-thumb {
+    background: var(--btn-bg-hover);
+    border-radius: 10px;
+}
+
+.CharacterSelect button.Close {
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    padding: 10px;
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    font-size: 2rem;
+    background-color: var(--btn-bg);
+    color: rgb(var(--text-primary));
+    margin-top: auto;
+    align-self: center;
+    z-index: 2;
+    cursor: pointer;
+}

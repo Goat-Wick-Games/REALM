@@ -31,7 +31,6 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
     const handleMouseMove = (e: React.MouseEvent) => {
         const { innerWidth, innerHeight } = window;
 
-        // normalize -1 → 1
         const x = (e.clientX / innerWidth - 0.5) * 2 * -1;
         const y = (e.clientY / innerHeight - 0.5) * 2 * -1;
 

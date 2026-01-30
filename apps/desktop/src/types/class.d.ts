@@ -1,1 +1,1 @@
-type Classes = 'barbarian' | 'druid' | 'assassin' | 'hunter' | 'craftsman';
+type Classes = 'barbarian' | 'druid' | 'assassin' | 'hunter' | 'craftsman' | '';

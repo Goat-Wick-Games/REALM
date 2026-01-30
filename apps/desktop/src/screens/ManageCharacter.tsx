@@ -1,18 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '../theme/ThemeContext';
 import './ManageCharacter.css';
 import races from '../fix-data/character-bases.json';
 import classes from '../fix-data/class-bases.json';
 import { CharactersStore } from '../characters';
-
-const charactersStore = new CharactersStore();
+import { toast } from 'react-toastify';
+import CharacterSelect from '../components/CharacterSelect';
 
 type ManageCharacterProps = {
     onBack: () => void;
 };
 
 const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
-    const [characterList, setCharacterList] = useState<Character[]>();
+    const { onBack } = props;
+    const { theme } = useTheme();
+    const charactersStore = useRef(new CharactersStore()).current;
+
+    const [characterList, setCharacterList] = useState<Character[]>([]);
+    const [character, setCharacter] = useState<Character>();
+    const [showSelect, setShowSelect] = useState<boolean>(false);
     const [name, setName] = useState<string>('');
     const [age, setAge] = useState<number>(0);
     const [bio, setBio] = useState<string>('');
@@ -25,8 +31,6 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         Legerity: 0,
         Magnetism: 0,
     });
-    const { onBack } = props;
-    const { theme } = useTheme();
 
     useEffect(() => {
         const initStore = async () => {
@@ -36,6 +40,8 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         };
         initStore();
     }, []);
+
+    useEffect(() => loadCharacter(), [character]);
 
     useEffect(() => {
         const raceTraits = race ? races[race].traits : undefined;
@@ -67,28 +73,77 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
     const capitalizeFirstLetter = (text: string): string =>
         text ? text.replace(text[0], text[0].toString().toUpperCase()) : '';
 
-    const saveCharacter = async () => {
-        if (!race) console.error('Select their race');
-        if (!$class) console.error('Select their class');
-        if (!name) console.error('Give them a name');
+    const clearSheet = () => {
+        setCharacter(undefined);
+        setName('');
+        setAge(0);
+        setBio('');
+        setRace('');
+        set$Class('');
+        setTraits({
+            Reflexes: 0,
+            Endurance: 0,
+            Acumen: 0,
+            Legerity: 0,
+            Magnetism: 0,
+        });
+    };
+
+    const loadCharacter = () => {
+        if (!characterList) return;
+
+        setName(character?.name ?? '');
+        setAge(character?.age ?? 0);
+        setBio(character?.bio ?? '');
+        setRace(character?.race ?? '');
+        set$Class(character?.class ?? '');
+    };
+
+    const editCharacter = async () => {
+        if (!race) toast.error('Select their race');
+        if (!$class) toast.error('Select their class');
+        if (!name) toast.error('Give them a name');
         if (!name || !race || !$class) return;
 
+        const newChar: Partial<Character> = {
+            name,
+            age: age === Number.POSITIVE_INFINITY ? -1 : age,
+            bio,
+        };
+
+        await charactersStore.update(character!.id, newChar);
+        const updatedList = await charactersStore.getAll();
+        clearSheet();
+        setCharacterList(updatedList);
+    };
+
+    const saveCharacter = async () => {
+        if (!race) toast.error('Select their race');
+        if (!$class) toast.error('Select their class');
+        if (!name) toast.error('Give them a name');
+        if (!name || !race || !$class) return;
+
+        const date: string = new Date().toISOString();
+
+        const allChars = await charactersStore.getAll();
+
+        const charId =
+            allChars.length > 0 ? Math.max(...allChars.map((c) => parseInt(c.id.slice(1)))) + 1 : 0;
+
         const newChar: Character = {
-            id: `c${
-                characterList && characterList.length > 0
-                    ? Math.max(...characterList.map((c) => parseInt(c.id.slice(1)))) + 1
-                    : 0
-            }`,
+            id: `c${charId.toString().padStart(2, '0')}`,
             name,
             race,
             class: $class,
             age: age === Number.POSITIVE_INFINITY ? -1 : age,
             bio,
-            createdAt: new Date().toISOString(),
+            createdAt: date,
+            lastPlayed: 'never',
         };
 
         await charactersStore.add(newChar);
         const updatedList = await charactersStore.getAll();
+        clearSheet();
         setCharacterList(updatedList);
     };
 
@@ -159,11 +214,14 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                     </div>
                     <div className="CharInfo">
                         <select
+                            value={race}
                             onChange={(e) => setRace(e.target.value as Races)}
                             name="CharRace"
                             id="Race"
                         >
-                            <option hidden>Choose Race</option>
+                            <option value="" hidden>
+                                Choose Race
+                            </option>
                             {Object.entries(races).map((race, i) => (
                                 <option key={i} value={race[0]}>
                                     {capitalizeFirstLetter(race[0])}
@@ -171,11 +229,14 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                             ))}
                         </select>
                         <select
+                            value={$class}
                             name="CharClass"
                             id="Class"
                             onChange={(e) => set$Class(e.target.value as Classes)}
                         >
-                            <option hidden>Choose Class</option>
+                            <option value="" hidden>
+                                Choose Class
+                            </option>
                             {Object.entries(classes).map(($class, i) => (
                                 <option key={i} value={$class[0]}>
                                     {capitalizeFirstLetter($class[0])}
@@ -200,11 +261,31 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                             Magnetism: <span>{traits.Magnetism}</span>
                         </div>
                     </div>
-                    <button className="SaveButton" onClick={saveCharacter}>
-                        Save
-                    </button>
+                    {!character ? (
+                        <button className="SaveButton" onClick={saveCharacter}>
+                            Save
+                        </button>
+                    ) : (
+                        <button className="SaveButton" onClick={editCharacter}>
+                            Edit
+                        </button>
+                    )}
                 </div>
             </div>
+            <div className="CharSelect">
+                <button name="Character" onClick={() => setShowSelect(true)}>
+                    Select Character
+                </button>
+            </div>
+            {showSelect && (
+                <CharacterSelect
+                    characterList={characterList}
+                    closePopup={(character) => {
+                        setCharacter(character);
+                        setShowSelect(false);
+                    }}
+                />
+            )}
         </main>
     );
 };

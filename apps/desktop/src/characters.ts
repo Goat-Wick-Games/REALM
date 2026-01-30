@@ -39,9 +39,9 @@ export class CharactersStore {
     }
 
     /** Update an existing character by name */
-    async update(name: string, updated: Partial<Character>): Promise<void> {
+    async update(id: string, updated: Partial<Character>): Promise<void> {
         const characters = await this.getAll();
-        const index = characters.findIndex((c) => c.name === name);
+        const index = characters.findIndex((c) => c.id === id);
         if (index === -1) return;
         characters[index] = { ...characters[index], ...updated };
         await this.appStore.set(this.key, characters);
