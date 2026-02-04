@@ -1,0 +1,64 @@
+.ExitPopup {
+    position: absolute;
+    top: 80vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(var(--bg-color), 0.9);
+    padding: 2rem;
+    border-radius: 12px;
+    min-width: 400px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+    z-index: 10;
+}
+
+.ExitPopup h2,
+.ExitPopup p {
+    margin-bottom: 1rem;
+    color: rgb(var(--text-primary));
+}
+
+.ExitPopup .fields {
+    margin-bottom: 1.5rem;
+}
+
+.ExitPopup button {
+    background-color: var(--btn-bg);
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+}
+
+.ExitPopup .popup-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.ExitPopup .confirm-btn {
+    background-color: #b22222;
+    color: rgb(var(--text-primary));
+    border: none;
+    padding: 0.7rem 1.5rem;
+    min-width: 150px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.ExitPopup .confirm-btn:hover {
+    background-color: #ff4c4c;
+}
+
+.ExitPopup .cancel-btn {
+    background-color: var(--btn-bg);
+    min-width: 150px;
+    color: rgb(var(--text-primary));
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}

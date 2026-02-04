@@ -4,16 +4,19 @@ import { useTheme, type Theme } from '../theme/ThemeContext';
 import type { Display } from '../display';
 import { setDisplay } from '../display';
 import { toast } from 'react-toastify';
+import './SettingsPopup.css';
 
 type SettingsPopupProps = {
     closePopup: () => void;
+    settingsChanged: () => void;
 };
 
 const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
     const settings = useRef(new AppStore('settings.json')).current;
     const { setTheme } = useTheme();
-    const { closePopup } = props;
+    const { closePopup, settingsChanged } = props;
     const [music, setMusic] = useState<number>();
+    const [reducedMotion, setReducedMotion] = useState<boolean>();
     const [sound, setSound] = useState<number>();
     const [innerTheme, setInnerTheme] = useState<Theme>();
     const [innerDisplay, setInnerDisplay] = useState<Display>();
@@ -21,6 +24,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
     useEffect(() => {
         (async () => {
             await settings.init();
+            setReducedMotion((await settings.get('reducedMotion')) || false);
             setMusic((await settings.get('music')) || 50);
             setSound((await settings.get('sound')) || 75);
             setInnerTheme((await settings.get('theme'))!);
@@ -30,15 +34,25 @@ const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
     }, []);
 
     useEffect(() => {
+        if (music === undefined) return;
         settings.set('music', music);
+        settingsChanged();
     }, [music]);
 
     useEffect(() => {
+        if (sound === undefined) return;
         settings.set('sound', sound);
+        settingsChanged();
     }, [sound]);
 
+    useEffect(() => {
+        if (reducedMotion === undefined) return;
+        settings.set('reducedMotion', reducedMotion);
+        settingsChanged();
+    }, [reducedMotion]);
+
     return (
-        <div className="Popup settings">
+        <div className="SettingsPopup">
             <h2>Settings</h2>
             <div className="fields">
                 <div className="Display">
@@ -128,6 +142,16 @@ const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
                             type="range"
                             min="0"
                             max="100"
+                        />
+                    </div>
+                </div>
+                <div className="music">
+                    Reduced reducedMotion:
+                    <div>
+                        <input
+                            type="checkbox"
+                            checked={reducedMotion}
+                            onChange={(e) => setReducedMotion(e.target.checked)}
                         />
                     </div>
                 </div>

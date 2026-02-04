@@ -1,0 +1,144 @@
+.SettingsPopup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(var(--bg-color), 0.9);
+    padding: 2rem;
+    border-radius: 12px;
+    min-width: 400px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+    z-index: 10;
+}
+
+.SettingsPopup h2,
+.SettingsPopup p {
+    margin-bottom: 1rem;
+    color: rgb(var(--text-primary));
+}
+
+.SettingsPopup .fields {
+    margin-bottom: 1.5rem;
+}
+
+.SettingsPopup button {
+    background-color: var(--btn-bg);
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+}
+
+.SettingsPopup .popup-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.SettingsPopup .confirm-btn {
+    background-color: #b22222;
+    color: rgb(var(--text-primary));
+    border: none;
+    padding: 0.7rem 1.5rem;
+    min-width: 150px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.SettingsPopup .confirm-btn:hover {
+    background-color: #ff4c4c;
+}
+
+.SettingsPopup .cancel-btn {
+    background-color: var(--btn-bg);
+    min-width: 150px;
+    color: rgb(var(--text-primary));
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.SettingsPopup .cancel-btn:hover {
+    background-color: var(--btn-bg-hover);
+}
+
+.SettingsPopup {
+    min-width: 500px;
+}
+
+.SettingsPopup .fields * {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.SettingsPopup input:first-child {
+    background-color: transparent;
+    border: none;
+    color: rgb(var(--text-primary));
+    width: 30px;
+    font-size: 1.2rem;
+    user-select: none;
+}
+
+.SettingsPopup input:first-child:focus {
+    outline: none;
+}
+
+.SettingsPopup button:hover {
+    transform: scale(1.1);
+}
+
+/* Inputs & Text */
+.SettingsPopup input[type='text'],
+.SettingsPopup input[type='number'] {
+    background-color: transparent;
+    border: 1px solid rgba(var(--text-primary), 0.3);
+    border-radius: 0.5rem;
+    color: rgb(var(--text-primary));
+    padding: 0.3rem 0.5rem;
+    font-size: 1rem;
+    width: 60px;
+    text-align: center;
+}
+
+.SettingsPopup input[type='text']:focus,
+.SettingsPopup input[type='number']:focus {
+    outline: none;
+    border-color: rgb(var(--text-primary));
+    box-shadow: 0 0 5px rgba(var(--text-primary), 0.3);
+}
+
+/* Checkboxes */
+.SettingsPopup input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* Selects */
+.SettingsPopup select,
+.SettingsPopup option {
+    border: 1px solid rgba(var(--text-primary), 0.3);
+    background-color: rgb(var(--bg-color));
+    border-radius: 0.5rem;
+    color: rgb(var(--text-primary));
+    padding: 0.3rem 0.5rem;
+    font-size: 1rem;
+    width: 200px;
+    cursor: pointer;
+}
+.SettingsPopup select:focus {
+    outline: none;
+    border-color: rgb(var(--text-primary));
+    box-shadow: 0 0 5px rgba(var(--text-primary), 0.3);
+}
+.SettingsPopup select:hover,
+.SettingsPopup input:hover {
+    cursor: pointer;
+}

@@ -33,6 +33,9 @@
     }
 }
 
+.layer-wall-2 {
+    transform: translate(var(--wall-2-x, 0), var(--wall-2-y, 0)) scale(1.1);
+}
 .layer-wall {
     transform: translate(var(--wall-x, 0), var(--wall-y, 0)) scale(1.1);
 }
@@ -103,105 +106,4 @@
     to {
         text-shadow: lightblue 0 5px 20px;
     }
-}
-
-/* Popup styling */
-.Popup {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(var(--bg-color), 0.9);
-    padding: 2rem;
-    border-radius: 12px;
-    min-width: 400px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 1.5rem;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
-    z-index: 10;
-}
-
-.Popup h2,
-.Popup p {
-    margin-bottom: 1rem;
-    color: rgb(var(--text-primary));
-}
-
-.Popup .fields {
-    margin-bottom: 1.5rem;
-}
-
-.Popup button {
-    background-color: var(--btn-bg);
-    font-weight: bold;
-    font-size: 1.5rem;
-    margin-top: 1rem;
-}
-
-.Popup .popup-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-}
-
-.Popup .confirm-btn {
-    background-color: #b22222;
-    color: rgb(var(--text-primary));
-    border: none;
-    padding: 0.7rem 1.5rem;
-    min-width: 150px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.Popup .confirm-btn:hover {
-    background-color: #ff4c4c;
-}
-
-.Popup .cancel-btn {
-    background-color: var(--btn-bg);
-    min-width: 150px;
-    color: rgb(var(--text-primary));
-    border: none;
-    padding: 0.7rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.Popup .cancel-btn:hover {
-    background-color: var(--btn-bg-hover);
-}
-
-.Popup.exit {
-    top: 80vh;
-}
-
-.Popup.settings {
-    min-width: 500px;
-}
-
-.Popup.settings .fields * {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.Popup.settings input:first-child {
-    background-color: transparent;
-    border: none;
-    color: rgb(var(--text-primary));
-    width: 30px;
-    font-size: 1.2rem;
-    user-select: none;
-}
-
-.Popup.settings input:first-child:focus {
-    outline: none;
-}
-
-.Popup button:hover {
-    transform: scale(1.1);
 }

@@ -20,14 +20,89 @@ export class CharactersStore {
     }
 
     /** Get all characters */
+    /** Get all characters */
     async getAll(): Promise<Character[]> {
-        return (await this.appStore.get<Character[]>(this.key)) || [];
+        const characters = (await this.appStore.get<Character[]>(this.key)) ?? [];
+
+        // Normalize every character and assign sequential IDs starting from 1
+        const normalized = characters.map((c, index) => this.normalizeCharacter(c, index + 1));
+
+        // Always save the normalized list to ensure consistency
+        await this.appStore.set(this.key, normalized);
+        await this.appStore.save();
+
+        return normalized;
+    }
+
+    private normalizeCharacter(character: Character, nextId: number): Character {
+        const raceList = ['', 'orc', 'elf', 'human', 'fiend', 'cyborg'];
+        const classList = ['', 'barbarian', 'druid', 'assassin', 'hunter', 'craftsman'];
+        const now = new Date().toISOString();
+
+        // Simple Levenshtein distance
+        function levenshtein(firstText: string, secondText: string): number {
+            const distance: number[][] = Array(firstText.length + 1)
+                .fill(0)
+                .map(() => Array(secondText.length + 1).fill(0));
+
+            for (let i = 0; i <= firstText.length; i++) distance[i][0] = i;
+            for (let j = 0; j <= secondText.length; j++) distance[0][j] = j;
+
+            for (let i = 1; i <= firstText.length; i++) {
+                for (let j = 1; j <= secondText.length; j++) {
+                    distance[i][j] =
+                        firstText[i - 1] === secondText[j - 1]
+                            ? distance[i - 1][j - 1]
+                            : Math.min(
+                                  distance[i - 1][j - 1], // substitution
+                                  distance[i][j - 1], // insertion
+                                  distance[i - 1][j], // deletion
+                              ) + 1;
+                }
+            }
+            return distance[firstText.length][secondText.length];
+        }
+
+        // Pick closest match from a list
+        function closestMatch(value: string, list: string[]): string {
+            if (!value) return '';
+            let best = '';
+            let bestDist = Infinity;
+            for (const option of list) {
+                const dist = levenshtein(value.toLowerCase(), option.toLowerCase());
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    best = option;
+                }
+            }
+            // Use proportional threshold: allow more edits for longer names
+            return bestDist <= Math.max(1, Math.floor(best.length * 0.4)) ? best : '';
+        }
+
+        return {
+            // ALWAYS assign a fresh ID
+            id: `c${nextId.toString().padStart(3, '0')}`,
+            createdAt: character.createdAt ?? now,
+            lastPlayed: character.lastPlayed ?? now,
+            name: character.name ?? '',
+            age: character.age ?? 0,
+            bio: character.bio ?? '',
+            class: closestMatch(character.class ?? '', classList) as Classes,
+            race: closestMatch(character.race ?? '', raceList) as Races,
+            looks: character.looks ?? {
+                head: 'none',
+                torso: 'none',
+                legs: 'none',
+            },
+        };
     }
 
     /** Get a single character by name */
     async getByName(name: string): Promise<Character | undefined> {
         const characters = await this.getAll();
-        return characters.find((c) => c.name === name);
+        const char: Character | undefined = characters.find((c) => c.name === name);
+        if (!char) return undefined;
+        return char;
     }
 
     /** Add a new character */
@@ -54,5 +129,13 @@ export class CharactersStore {
         const filtered = characters.filter((c) => c.name !== name);
         await this.appStore.set(this.key, filtered);
         await this.appStore.save();
+    }
+
+    async getMaxId(): Promise<number> {
+        const allChars = await this.getAll();
+
+        return allChars.length > 0
+            ? Math.max(...allChars.map((c) => (c.id ? parseInt(c.id.slice(1)) : 0))) + 1
+            : 0;
     }
 }

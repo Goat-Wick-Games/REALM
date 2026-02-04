@@ -1,3 +1,4 @@
+import './ExitPopup.css';
 type ExitPopupProps = {
     closePopup: () => void;
     exitApp: () => void;
@@ -7,7 +8,7 @@ const ExitPopup: React.FC<ExitPopupProps> = (props) => {
     const { closePopup, exitApp } = props;
 
     return (
-        <div className="Popup exit">
+        <div className="ExitPopup">
             <p>Are you sure you want to exit?</p>
             <div className="popup-buttons">
                 <button className="confirm-btn" onClick={exitApp}>

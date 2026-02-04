@@ -30,7 +30,7 @@ button:hover {
 }
 
 button:active {
-    transform: scale(0.9) !important;
+    transform: scale(1.01) !important;
 }
 /* ---------- DEFAULT (light) ---------- */
 :root {

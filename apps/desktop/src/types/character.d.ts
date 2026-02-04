@@ -7,4 +7,5 @@ type Character = {
     bio: string;
     createdAt: string;
     lastPlayed: string;
+    looks: Looks;
 };

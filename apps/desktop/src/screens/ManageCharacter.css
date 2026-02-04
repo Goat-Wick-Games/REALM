@@ -260,7 +260,7 @@
 }
 .ManageCharacter .CharSelect {
     position: absolute;
-    right: 150px;
+    right: 50px;
     bottom: 30px;
     background-color: var(--btn-bg);
     color: rgb(var(--text-primary));
@@ -284,4 +284,33 @@
     align-self: center;
     z-index: 2;
     cursor: pointer;
+}
+
+.ManageCharacter .CharArrows,
+.ManageCharacter .CharLooks {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    gap: 20px;
+    right: 250px;
+    bottom: 150px;
+}
+
+.ManageCharacter .CharArrows {
+    gap: 80px;
+    bottom: 170px;
+    right: 450px;
+}
+.ManageCharacter .CharArrows.L {
+    right: 50px;
+    transform: rotateY(180deg);
+}
+.ManageCharacter .CharArrows *:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
+.ManageCharacter .CharArrows *:active {
+    cursor: pointer;
+    transform: scale(1.01);
 }

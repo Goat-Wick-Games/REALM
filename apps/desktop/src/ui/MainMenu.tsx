@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './MainMenu.css';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import SettingsPopup from '../components/SettingsPopup';
 import ExitPopup from '../components/ExitPopup';
 import { useTheme } from '../theme/ThemeContext';
+import { AppStore } from '../storage';
 
 type menuTypes = 'host' | 'join' | 'manage character' | 'manage realm' | 'settings' | 'exit' | '';
 
@@ -13,9 +14,25 @@ type MainMenuProps = {
 };
 
 const MainMenu: React.FC<MainMenuProps> = (props) => {
+    const settings = useRef(new AppStore('settings.json')).current;
+    const [reducedMotion, setReducedMotion] = useState<boolean>();
     const { onManageCharacter, onManageRealm } = props;
     const [openMenu, setOpenMenu] = useState<menuTypes>('');
     const { theme } = useTheme();
+
+    useEffect(() => {
+        (async () => {
+            await settings.init();
+            setReducedMotion(await settings.get('reducedMotion'));
+        })();
+    }, []);
+
+    const refresh = () => {
+        (async () => {
+            await settings.init();
+            setReducedMotion(await settings.get('reducedMotion'));
+        })();
+    };
 
     const open = (menu: menuTypes) => {
         openMenu === menu ? close() : setOpenMenu(menu);
@@ -29,6 +46,7 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
     };
 
     const handleMouseMove = (e: React.MouseEvent) => {
+        if (reducedMotion) return;
         const { innerWidth, innerHeight } = window;
 
         const x = (e.clientX / innerWidth - 0.5) * 2 * -1;
@@ -36,8 +54,11 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
 
         // update CSS variables
         const bg = document.querySelector('.MenuBackground') as HTMLElement;
-        bg.style.setProperty('--wall-x', `${x * 5 * (16 / 9)}px`);
-        bg.style.setProperty('--wall-y', `${y * 5}px`);
+        bg.style.setProperty('--wall-x', `${x * 4 * (16 / 9)}px`);
+        bg.style.setProperty('--wall-y', `${y * 4}px`);
+
+        bg.style.setProperty('--wall-2-x', `${x * 6 * (16 / 9)}px`);
+        bg.style.setProperty('--wall-2-y', `${y * 6}px`);
 
         bg.style.setProperty('--mid-x', `${x * 12 * (16 / 9)}px`);
         bg.style.setProperty('--mid-y', `${y * 12}px`);
@@ -51,6 +72,7 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
             {/* FALSE 3D BACKGROUND */}
             <div className="MenuBackground">
                 <img src={`/bg/wall-${theme}.svg`} className="bg layer-wall" />
+                <img src={`/bg/wall-${theme}-2.svg`} className="bg layer-wall-2" />
                 <img src={`/bg/floor-${theme}.svg`} className="bg layer-wall" />
                 <img src="/bg/bartender.svg" className="bg layer-bartender" />
                 <img src={`/bg/bar-${theme}.svg`} className="bg layer-bar" />
@@ -116,7 +138,9 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
 
             {openMenu === 'join' && <></>}
 
-            {openMenu === 'settings' && <SettingsPopup closePopup={close} />}
+            {openMenu === 'settings' && (
+                <SettingsPopup closePopup={close} settingsChanged={refresh} />
+            )}
 
             {openMenu === 'exit' && <ExitPopup closePopup={close} exitApp={handleExit} />}
         </main>

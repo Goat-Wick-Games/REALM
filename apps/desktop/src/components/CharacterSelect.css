@@ -1,6 +1,3 @@
-/* ===============================
-   FULLSCREEN BACKGROUND
-================================ */
 .CharacterSelect {
     width: 100vw;
     height: 100vh;
@@ -15,11 +12,8 @@
     font-family: 'Trebuchet MS', sans-serif;
 }
 
-/* ===============================
-   MAIN MENU PANEL
-================================ */
 .CharacterSelect .Panel {
-    width: 800px;
+    width: 900px;
     max-height: 85vh;
     padding: 22px;
     display: flex;
@@ -27,7 +21,6 @@
     justify-content: center;
     flex-wrap: wrap;
     gap: 14px;
-    overflow-y: auto;
 
     /* game-like panel */
     background: var(--panel-bg);
@@ -40,9 +33,35 @@
         0 15px 40px rgba(0, 0, 0, 0.5);
 }
 
-/* ===============================
-   CHARACTER SLOT (save slot)
-================================ */
+.CharacterSelect .Header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.CharacterSelect .Search {
+    border-radius: 10px;
+    font-size: 2rem;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+}
+
+.CharacterSelect .PanelInner {
+    width: 900px;
+    max-height: 75vh;
+    padding: 22px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    overflow-y: auto;
+    border-radius: 12px;
+}
+
 .CharacterSelect .Slot {
     display: flex;
     flex-direction: column;
@@ -60,21 +79,16 @@
     transition: all 0.15s ease;
 }
 
-/* Hover = "pressable" game button */
 .CharacterSelect .Slot:hover {
     background: var(--btn-bg-hover);
     transform: translateY(-2px);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
 }
 
-/* Click press feel */
 .CharacterSelect .Slot:active {
     transform: translateY(1px);
 }
 
-/* ===============================
-   AVATAR
-================================ */
 .CharacterSelect .Avatar {
     display: flex;
     justify-content: center;
@@ -91,9 +105,6 @@
     font-size: 3rem;
 }
 
-/* ===============================
-   TEXT AREA
-================================ */
 .CharacterSelect .Info {
     display: flex;
     flex-direction: column;
@@ -114,22 +125,19 @@
     opacity: 0.7;
 }
 
-/* ===============================
-   SCROLLBAR (optional polish)
-================================ */
-.CharacterSelect .Panel::-webkit-scrollbar {
+.CharacterSelect .PanelInner::-webkit-scrollbar {
     width: 8px;
 }
 
-.CharacterSelect .Panel::-webkit-scrollbar-thumb {
+.CharacterSelect .PanelInner::-webkit-scrollbar-thumb {
     background: var(--btn-bg-hover);
     border-radius: 10px;
 }
 
 .CharacterSelect button.Close {
-    position: absolute;
-    left: 30px;
-    top: 30px;
+    position: relative;
+    left: 0px;
+    top: 0px;
     padding: 10px;
     border-radius: 50%;
     width: 70px;

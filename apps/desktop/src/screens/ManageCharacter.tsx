@@ -6,6 +6,7 @@ import classes from '../fix-data/class-bases.json';
 import { CharactersStore } from '../characters';
 import { toast } from 'react-toastify';
 import CharacterSelect from '../components/CharacterSelect';
+import { AppStore } from '../storage';
 
 type ManageCharacterProps = {
     onBack: () => void;
@@ -15,12 +16,15 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
     const { onBack } = props;
     const { theme } = useTheme();
     const charactersStore = useRef(new CharactersStore()).current;
+    const settings = useRef(new AppStore('settings.json')).current;
+    const [reducedMotion, setReducedMotion] = useState<boolean>();
 
     const [characterList, setCharacterList] = useState<Character[]>([]);
     const [character, setCharacter] = useState<Character>();
     const [showSelect, setShowSelect] = useState<boolean>(false);
     const [name, setName] = useState<string>('');
     const [age, setAge] = useState<number>(0);
+    const [look, setLook] = useState<Looks>({ head: 'none', legs: 'none', torso: 'none' });
     const [bio, setBio] = useState<string>('');
     const [race, setRace] = useState<Races>();
     const [$class, set$Class] = useState<Classes>();
@@ -41,6 +45,13 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         initStore();
     }, []);
 
+    useEffect(() => {
+        (async () => {
+            await settings.init();
+            setReducedMotion(await settings.get('reducedMotion'));
+        })();
+    }, []);
+
     useEffect(() => loadCharacter(), [character]);
 
     useEffect(() => {
@@ -58,7 +69,10 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         setTraits(totalTraits);
     }, [race, $class]);
 
+    useEffect(() => setAge(0), [race]);
+
     const handleMouseMove = (e: React.MouseEvent) => {
+        if (reducedMotion) return;
         const { innerWidth, innerHeight } = window;
 
         const x = (e.clientX / innerWidth - 0.5) * 2;
@@ -66,8 +80,11 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
 
         // update CSS variables
         const bg = document.querySelector('.MenuBackground') as HTMLElement;
-        bg.style.setProperty('--wall-x', `${x * 5 * (16 / 9)}px`);
-        bg.style.setProperty('--wall-y', `${y * 5}px`);
+        bg.style.setProperty('--wall-x', `${x * 4 * (16 / 9)}px`);
+        bg.style.setProperty('--wall-y', `${y * 4}px`);
+
+        bg.style.setProperty('--wall-2-x', `${x * 6 * (16 / 9)}px`);
+        bg.style.setProperty('--wall-2-y', `${y * 6}px`);
     };
 
     const capitalizeFirstLetter = (text: string): string =>
@@ -104,11 +121,16 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         if (!$class) toast.error('Select their class');
         if (!name) toast.error('Give them a name');
         if (!name || !race || !$class) return;
+        if (!look.head || !look.legs || !look.torso) return toast.error('Give them a look');
+        if (look.head === 'none' || look.legs === 'none' || look.torso === 'none')
+            return toast.error('Give them a look');
 
         const newChar: Partial<Character> = {
             name,
             age: age === Number.POSITIVE_INFINITY ? -1 : age,
             bio,
+            race,
+            class: $class,
         };
 
         await charactersStore.update(character!.id, newChar);
@@ -122,13 +144,12 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         if (!$class) toast.error('Select their class');
         if (!name) toast.error('Give them a name');
         if (!name || !race || !$class) return;
+        if (!look.head || !look.legs || !look.torso) return toast.error('Give them a look');
+        if (look.head === 'none' || look.legs === 'none' || look.torso === 'none')
+            return toast.error('Give them a look');
 
         const date: string = new Date().toISOString();
-
-        const allChars = await charactersStore.getAll();
-
-        const charId =
-            allChars.length > 0 ? Math.max(...allChars.map((c) => parseInt(c.id.slice(1)))) + 1 : 0;
+        const charId = await charactersStore.getMaxId();
 
         const newChar: Character = {
             id: `c${charId.toString().padStart(2, '0')}`,
@@ -139,6 +160,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
             bio,
             createdAt: date,
             lastPlayed: 'never',
+            looks: look,
         };
 
         await charactersStore.add(newChar);
@@ -159,6 +181,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
             </div>
             <div className="MenuBackground">
                 <img src={`/bg/wall-${theme}.svg`} className="bg layer-wall" />
+                <img src={`/bg/wall-${theme}-2.svg`} className="bg layer-wall-2" />
                 <img src={`/bg/floor-${theme}.svg`} className="bg layer-wall" />
                 <img src={`/bg/stand-${theme}.svg`} className="bg layer-wall" />
             </div>
@@ -271,6 +294,33 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                         </button>
                     )}
                 </div>
+            </div>
+            <div className="CharArrows L">
+                <img src={`/ui/arrow-${theme}.svg`} className="ArrowL" alt="Arrow" />
+                <img src={`/ui/arrow-${theme}.svg`} className="ArrowL" alt="Arrow" />
+                <img src={`/ui/arrow-${theme}.svg`} className="ArrowL" alt="Arrow" />
+            </div>
+            <div className="CharLooks">
+                <img
+                    src={`/characters/${character?.looks.head ?? 'none'}-${theme}.svg`}
+                    className="Head"
+                    alt="Head"
+                />
+                <img
+                    src={`/characters/${character?.looks.torso ?? 'none'}-${theme}.svg`}
+                    className="Torso"
+                    alt="Torso"
+                />
+                <img
+                    src={`/characters/${character?.looks.legs ?? 'none'}-${theme}.svg`}
+                    className="Legs"
+                    alt="Legs"
+                />
+            </div>
+            <div className="CharArrows R">
+                <img src={`/ui/arrow-${theme}.svg`} className="ArrowR" alt="Arrow" />
+                <img src={`/ui/arrow-${theme}.svg`} className="ArrowR" alt="Arrow" />
+                <img src={`/ui/arrow-${theme}.svg`} className="ArrowR" alt="Arrow" />
             </div>
             <div className="CharSelect">
                 <button name="Character" onClick={() => setShowSelect(true)}>
