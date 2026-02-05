@@ -89,11 +89,6 @@ export class CharactersStore {
             bio: character.bio ?? '',
             class: closestMatch(character.class ?? '', classList) as Classes,
             race: closestMatch(character.race ?? '', raceList) as Races,
-            looks: character.looks ?? {
-                head: 'none',
-                torso: 'none',
-                legs: 'none',
-            },
         };
     }
 

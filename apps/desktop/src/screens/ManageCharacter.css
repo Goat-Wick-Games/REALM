@@ -286,31 +286,9 @@
     cursor: pointer;
 }
 
-.ManageCharacter .CharArrows,
-.ManageCharacter .CharLooks {
+.ManageCharacter .CharacterLooks {
+    background-color: rgba(0, 255, 255, 0.05);
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    width: 200px;
-    gap: 20px;
-    right: 250px;
-    bottom: 150px;
-}
-
-.ManageCharacter .CharArrows {
-    gap: 80px;
-    bottom: 170px;
-    right: 450px;
-}
-.ManageCharacter .CharArrows.L {
-    right: 50px;
-    transform: rotateY(180deg);
-}
-.ManageCharacter .CharArrows *:hover {
-    cursor: pointer;
-    transform: scale(1.1);
-}
-.ManageCharacter .CharArrows *:active {
-    cursor: pointer;
-    transform: scale(1.01);
+    width: 450px;
+    transform: translateX(var(--char-x, 200px)) translateY(var(--char-y, 0)) scale(1.1);
 }

@@ -69,7 +69,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = (props) => {
                             className="Slot"
                         >
                             <img
-                                src={`/characters/${character?.looks.head ?? 'none'}-${theme}.svg`}
+                                src={`/characters/${character.race && character.class ? `${character.race}-${character.class}` : 'none'}-head-${theme}.svg`}
                                 className="Avatar"
                                 alt="Avatar"
                             />

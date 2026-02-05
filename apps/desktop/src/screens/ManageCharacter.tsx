@@ -14,20 +14,27 @@ type ManageCharacterProps = {
 
 const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
     const { onBack } = props;
-    const { theme } = useTheme();
+
+    const bobFrame = useRef<number>(0);
+    const bobStart = useRef<number>(performance.now());
+    const containerRef = useRef<HTMLElement | null>(null);
     const charactersStore = useRef(new CharactersStore()).current;
+
+    const [reducedMotion, setReducedMotion] = useState<boolean>(true);
     const settings = useRef(new AppStore('settings.json')).current;
-    const [reducedMotion, setReducedMotion] = useState<boolean>();
+    const { theme } = useTheme();
+
+    const [showSelect, setShowSelect] = useState<boolean>(false);
+
+    const [name, setName] = useState<string>('');
+    const [look, setLook] = useState<string>('none');
+    const [bio, setBio] = useState<string>('');
+    const [age, setAge] = useState<number>(0);
 
     const [characterList, setCharacterList] = useState<Character[]>([]);
     const [character, setCharacter] = useState<Character>();
-    const [showSelect, setShowSelect] = useState<boolean>(false);
-    const [name, setName] = useState<string>('');
-    const [age, setAge] = useState<number>(0);
-    const [look, setLook] = useState<Looks>({ head: 'none', legs: 'none', torso: 'none' });
-    const [bio, setBio] = useState<string>('');
-    const [race, setRace] = useState<Races>();
     const [$class, set$Class] = useState<Classes>();
+    const [race, setRace] = useState<Races>();
     const [traits, setTraits] = useState({
         Reflexes: 0,
         Endurance: 0,
@@ -48,11 +55,19 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
     useEffect(() => {
         (async () => {
             await settings.init();
-            setReducedMotion(await settings.get('reducedMotion'));
+            setReducedMotion((await settings.get('reducedMotion')) || false);
         })();
     }, []);
 
-    useEffect(() => loadCharacter(), [character]);
+    useEffect(() => {
+        if (!character) return;
+
+        setName(character.name ?? '');
+        setAge(character.age ?? 0);
+        setBio(character.bio ?? '');
+        setRace(character.race ?? null);
+        set$Class(character.class ?? null);
+    }, [character]);
 
     useEffect(() => {
         const raceTraits = race ? races[race].traits : undefined;
@@ -67,6 +82,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         };
 
         setTraits(totalTraits);
+        setLook(race && $class ? `${race}-${$class}` : 'none');
     }, [race, $class]);
 
     useEffect(() => setAge(0), [race]);
@@ -79,13 +95,39 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         const y = (e.clientY / innerHeight - 0.5) * 2 * -1;
 
         // update CSS variables
-        const bg = document.querySelector('.MenuBackground') as HTMLElement;
-        bg.style.setProperty('--wall-x', `${x * 4 * (16 / 9)}px`);
-        bg.style.setProperty('--wall-y', `${y * 4}px`);
+        const bg = containerRef.current;
+        bg?.style.setProperty('--wall-x', `${x * 4 * (16 / 9)}px`);
+        bg?.style.setProperty('--wall-y', `${y * 4}px`);
 
-        bg.style.setProperty('--wall-2-x', `${x * 6 * (16 / 9)}px`);
-        bg.style.setProperty('--wall-2-y', `${y * 6}px`);
+        bg?.style.setProperty('--wall-2-x', `${x * 6 * (16 / 9)}px`);
+        bg?.style.setProperty('--wall-2-y', `${y * 6}px`);
+
+        bg?.style.setProperty('--char-x', `${x * 6 * (16 / 9) + 200}px`);
     };
+
+    useEffect(() => {
+        if (reducedMotion) return;
+
+        const amplitude = 50; // how high it moves (px)
+        const speed = 1 / 1000; // lower = slower
+
+        const animate = (time: number) => {
+            if (!containerRef.current) return;
+
+            const elapsed = time - bobStart.current;
+            const offset = Math.sin(elapsed * speed) * amplitude;
+
+            containerRef.current.style.setProperty('--char-y', `${offset}px`);
+
+            bobFrame.current = requestAnimationFrame(animate);
+        };
+
+        bobFrame.current = requestAnimationFrame(animate);
+
+        return () => {
+            if (bobFrame.current) cancelAnimationFrame(bobFrame.current);
+        };
+    }, [reducedMotion]);
 
     const capitalizeFirstLetter = (text: string): string =>
         text ? text.replace(text[0], text[0].toString().toUpperCase()) : '';
@@ -106,24 +148,12 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         });
     };
 
-    const loadCharacter = () => {
-        if (!characterList) return;
-
-        setName(character?.name ?? '');
-        setAge(character?.age ?? 0);
-        setBio(character?.bio ?? '');
-        setRace(character?.race ?? '');
-        set$Class(character?.class ?? '');
-    };
-
     const editCharacter = async () => {
+        if (!character) toast.error('No Character Selected (how?)');
         if (!race) toast.error('Select their race');
         if (!$class) toast.error('Select their class');
         if (!name) toast.error('Give them a name');
-        if (!name || !race || !$class) return;
-        if (!look.head || !look.legs || !look.torso) return toast.error('Give them a look');
-        if (look.head === 'none' || look.legs === 'none' || look.torso === 'none')
-            return toast.error('Give them a look');
+        if (!character || !name || !race || !$class) return;
 
         const newChar: Partial<Character> = {
             name,
@@ -133,7 +163,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
             class: $class,
         };
 
-        await charactersStore.update(character!.id, newChar);
+        await charactersStore.update(character.id, newChar);
         const updatedList = await charactersStore.getAll();
         clearSheet();
         setCharacterList(updatedList);
@@ -144,9 +174,6 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         if (!$class) toast.error('Select their class');
         if (!name) toast.error('Give them a name');
         if (!name || !race || !$class) return;
-        if (!look.head || !look.legs || !look.torso) return toast.error('Give them a look');
-        if (look.head === 'none' || look.legs === 'none' || look.torso === 'none')
-            return toast.error('Give them a look');
 
         const date: string = new Date().toISOString();
         const charId = await charactersStore.getMaxId();
@@ -160,7 +187,6 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
             bio,
             createdAt: date,
             lastPlayed: 'never',
-            looks: look,
         };
 
         await charactersStore.add(newChar);
@@ -170,7 +196,11 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
     };
 
     return (
-        <main className="ManageCharacter" onMouseMove={(e) => handleMouseMove(e)}>
+        <main
+            ref={containerRef}
+            className="ManageCharacter"
+            onMouseMove={(e) => handleMouseMove(e)}
+        >
             <button className={`back-btn ${theme}`} onClick={onBack}>
                 ←
             </button>
@@ -180,10 +210,15 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                 </h1>
             </div>
             <div className="MenuBackground">
-                <img src={`/bg/wall-${theme}.svg`} className="bg layer-wall" />
-                <img src={`/bg/wall-${theme}-2.svg`} className="bg layer-wall-2" />
-                <img src={`/bg/floor-${theme}.svg`} className="bg layer-wall" />
-                <img src={`/bg/stand-${theme}.svg`} className="bg layer-wall" />
+                <img src={`/bg/wall-${theme}.svg`} alt="MenuWall" className="bg layer-wall" />
+                <img src={`/bg/wall-${theme}-2.svg`} alt="MenuWall2" className="bg layer-wall-2" />
+                <img src={`/bg/floor-${theme}.svg`} alt="MenuFloor" className="bg layer-wall-2" />
+                <img src={`/bg/stand-${theme}.svg`} alt="MenuStand" className="bg layer-wall-2" />
+                <img
+                    src={`/characters/${look}-${theme}.svg`}
+                    alt="CharacterLooks"
+                    className="bg CharacterLooks"
+                />
             </div>
             <div className="CharacterStats">
                 <div className="CharacterStatsInner">
@@ -295,33 +330,6 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                     )}
                 </div>
             </div>
-            <div className="CharArrows L">
-                <img src={`/ui/arrow-${theme}.svg`} className="ArrowL" alt="Arrow" />
-                <img src={`/ui/arrow-${theme}.svg`} className="ArrowL" alt="Arrow" />
-                <img src={`/ui/arrow-${theme}.svg`} className="ArrowL" alt="Arrow" />
-            </div>
-            <div className="CharLooks">
-                <img
-                    src={`/characters/${character?.looks.head ?? 'none'}-${theme}.svg`}
-                    className="Head"
-                    alt="Head"
-                />
-                <img
-                    src={`/characters/${character?.looks.torso ?? 'none'}-${theme}.svg`}
-                    className="Torso"
-                    alt="Torso"
-                />
-                <img
-                    src={`/characters/${character?.looks.legs ?? 'none'}-${theme}.svg`}
-                    className="Legs"
-                    alt="Legs"
-                />
-            </div>
-            <div className="CharArrows R">
-                <img src={`/ui/arrow-${theme}.svg`} className="ArrowR" alt="Arrow" />
-                <img src={`/ui/arrow-${theme}.svg`} className="ArrowR" alt="Arrow" />
-                <img src={`/ui/arrow-${theme}.svg`} className="ArrowR" alt="Arrow" />
-            </div>
             <div className="CharSelect">
                 <button name="Character" onClick={() => setShowSelect(true)}>
                     Select Character
@@ -331,7 +339,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                 <CharacterSelect
                     characterList={characterList}
                     closePopup={(character) => {
-                        setCharacter(character);
+                        !character ? clearSheet() : setCharacter(character);
                         setShowSelect(false);
                     }}
                 />
