@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useTheme } from '../theme/ThemeContext';
 import './CharacterSelect.css';
 
 type CharacterSelectProps = {
     characterList: Character[];
-    closePopup: (selected?: Character) => void;
+    closePopup: (selected?: Character | null, exit?: boolean) => void;
 };
 
 const CharacterSelect: React.FC<CharacterSelectProps> = (props) => {
     const { characterList, closePopup } = props;
-    const { theme } = useTheme();
     const [name, setName] = useState<string>('');
     const [filteredCharacters, setFilteredCharacters] = useState<Character[]>([]);
 
@@ -39,7 +37,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = (props) => {
         <main className="CharacterSelect">
             <div className="Panel">
                 <section className="Header">
-                    <button onClick={() => closePopup()} className="Close">
+                    <button onClick={() => closePopup(null, true)} className="Close">
                         X
                     </button>
                     <h2>
@@ -69,7 +67,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = (props) => {
                             className="Slot"
                         >
                             <img
-                                src={`/characters/${character.race && character.class ? `${character.race}-${character.class}` : 'none'}-head-${theme}.svg`}
+                                src={`/characters/icons/${character.race && character.class ? `${character.race}/${character.race}-${character.class}` : 'none'}.svg`}
                                 className="Avatar"
                                 alt="Avatar"
                             />

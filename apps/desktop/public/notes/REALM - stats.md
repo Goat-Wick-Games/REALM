@@ -74,12 +74,23 @@
 
 # CLASSES COLORS
 
+### DARK BASE - #1a1a1a
+
+### LIGHT BASE - #d1d1d1
+
+- 1,642 mm
+- 0,800 mm
+
 > ## FRIENDLY
 >
 > barbarian - light red #FF5555
+>
 > druid - light green #99FF55
+>
 > assassin - white #E2E2E2
+>
 > hunter - light brown #D38D5F
+>
 > craftsman - light blue #80E5FF
 >
 > > for both themes
@@ -89,16 +100,20 @@
 > ## ENEMY
 >
 > barbarian - dark red
+>
 > druid - dark green
+>
 > assassin - gray
+>
 > hunter - dark brown
+>
 > craftsman - dark blue
 >
 > > for both themes
 >
 > ​​
 
-# CLASSES COLORS
+# ICON COLORS
 
 > Orc - Waraxe
 >

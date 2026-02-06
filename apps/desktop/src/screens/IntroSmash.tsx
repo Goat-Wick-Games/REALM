@@ -124,7 +124,7 @@ const IntroSmash: React.FC<IntroSmashProps> = ({ onDone }) => {
         c.width = w;
         c.height = h;
         const ctx = c.getContext('2d')!;
-        ctx.fillStyle = theme === 'light' ? '#fff' : '#1e1e1e';
+        ctx.fillStyle = theme === 'light' ? '#ffffff' : '#1e1e1e';
         ctx.beginPath();
         ctx.moveTo(points[0][0] - minX, points[0][1] - minY);
         for (let i = 1; i < points.length; i++) {

@@ -83,9 +83,12 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
 
         setTraits(totalTraits);
         setLook(race && $class ? `${race}-${$class}` : 'none');
+        if (!$class) setLook(race ? `${race}-base` : 'none');
     }, [race, $class]);
 
-    useEffect(() => setAge(0), [race]);
+    useEffect(() => {
+        if (!character) setAge(0);
+    }, [race]);
 
     const handleMouseMove = (e: React.MouseEvent) => {
         if (reducedMotion) return;
@@ -215,7 +218,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                 <img src={`/bg/floor-${theme}.svg`} alt="MenuFloor" className="bg layer-wall-2" />
                 <img src={`/bg/stand-${theme}.svg`} alt="MenuStand" className="bg layer-wall-2" />
                 <img
-                    src={`/characters/${look}-${theme}.svg`}
+                    src={`/characters/${theme}/${race ? `${race}/` : ''}${look}.svg`}
                     alt="CharacterLooks"
                     className="bg CharacterLooks"
                 />
@@ -241,10 +244,11 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                             id="CharAge"
                             placeholder="Age..."
                             className="CharacterAge"
-                            value={age}
+                            value={age === -1 ? Number.POSITIVE_INFINITY : age}
                             onChange={(e) => {
                                 const maxValue = race ? races[race].maxAge : 0;
                                 let val = e.target.value;
+                                console.log(val);
                                 if (val.startsWith('0')) val = val.replace('0', '');
                                 val = val.replace('-', '');
 
@@ -338,8 +342,8 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
             {showSelect && (
                 <CharacterSelect
                     characterList={characterList}
-                    closePopup={(character) => {
-                        !character ? clearSheet() : setCharacter(character);
+                    closePopup={(character, exit) => {
+                        !character ? !exit && clearSheet() : setCharacter(character);
                         setShowSelect(false);
                     }}
                 />

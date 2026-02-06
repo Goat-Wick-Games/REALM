@@ -1,3 +1,4 @@
+import races from './fix-data/character-bases.json';
 import { AppStore } from './storage';
 
 export class CharactersStore {
@@ -19,7 +20,6 @@ export class CharactersStore {
         }
     }
 
-    /** Get all characters */
     /** Get all characters */
     async getAll(): Promise<Character[]> {
         const characters = (await this.appStore.get<Character[]>(this.key)) ?? [];
@@ -75,8 +75,16 @@ export class CharactersStore {
                     best = option;
                 }
             }
+
             // Use proportional threshold: allow more edits for longer names
             return bestDist <= Math.max(1, Math.floor(best.length * 0.4)) ? best : '';
+        }
+
+        let age = character.age;
+
+        if (character && character.race) {
+            const maxAge = races[character.race].maxAge;
+            age = character.age > maxAge ? maxAge : character.age;
         }
 
         return {
@@ -85,7 +93,7 @@ export class CharactersStore {
             createdAt: character.createdAt ?? now,
             lastPlayed: character.lastPlayed ?? now,
             name: character.name ?? '',
-            age: character.age ?? 0,
+            age: age ?? 0,
             bio: character.bio ?? '',
             class: closestMatch(character.class ?? '', classList) as Classes,
             race: closestMatch(character.race ?? '', raceList) as Races,

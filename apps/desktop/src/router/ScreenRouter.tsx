@@ -5,7 +5,7 @@ import MainMenu from '../ui/MainMenu';
 import ManageCharacter from '../screens/ManageCharacter';
 
 const ScreenRouter: React.FC = () => {
-    const [screen, setScreen] = useState<Screen>('manage character');
+    const [screen, setScreen] = useState<Screen>('menu');
     const [showMainMenu, setShowMainMenu] = useState<boolean>(false);
     const [showIntro, setShowIntro] = useState<boolean>(true);
 

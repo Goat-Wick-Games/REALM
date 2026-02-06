@@ -7,10 +7,12 @@
 
 .Intro .Overlay.dark {
     animation: text-blink-dark infinite 1s;
+    background-color: #1e1e1e;
 }
 
 .Intro .Overlay {
     animation: text-blink-light infinite 1s;
+    background-color: #ffffff;
 }
 
 .Intro .Canvas {
