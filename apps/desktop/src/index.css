@@ -23,6 +23,7 @@ body {
 * {
     transition: all 0.1s;
     text-align: center;
+    box-sizing: border-box;
 }
 
 button:hover {

@@ -3,10 +3,10 @@ import { useTheme } from '../theme/ThemeContext';
 import './ManageCharacter.css';
 import races from '../fix-data/character-bases.json';
 import classes from '../fix-data/class-bases.json';
-import { CharactersStore } from '../characters';
+import { CharactersStore } from '../CharactersStore';
 import { toast } from 'react-toastify';
 import CharacterSelect from '../components/CharacterSelect';
-import { AppStore } from '../storage';
+import { AppStore } from '../AppStore';
 
 type ManageCharacterProps = {
     onBack: () => void;
@@ -204,12 +204,12 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
             className="ManageCharacter"
             onMouseMove={(e) => handleMouseMove(e)}
         >
-            <button className={`back-btn ${theme}`} onClick={onBack}>
+            <button className="BackBtn" onClick={onBack}>
                 ←
             </button>
             <div className="Topbar">
                 <h1 className="Title">
-                    RE<span className="Slash">/\</span>LM
+                    CHAR<span className="Slash">/\</span>CTERS
                 </h1>
             </div>
             <div className="MenuBackground">

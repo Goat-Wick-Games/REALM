@@ -1,5 +1,5 @@
 import { getCurrentWindow, Window } from '@tauri-apps/api/window';
-import { AppStore } from './storage';
+import { AppStore } from './AppStore';
 
 export type Display = 'fullscreen' | 'windowed fullscreen' | 'windowed';
 

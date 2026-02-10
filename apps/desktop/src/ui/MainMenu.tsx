@@ -4,9 +4,9 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import SettingsPopup from '../components/SettingsPopup';
 import ExitPopup from '../components/ExitPopup';
 import { useTheme } from '../theme/ThemeContext';
-import { AppStore } from '../storage';
+import { AppStore } from '../AppStore';
 
-type menuTypes = 'host' | 'join' | 'manage character' | 'manage realm' | 'settings' | 'exit' | '';
+type menuTypes = 'host' | 'join' | 'settings' | 'exit' | '';
 
 type MainMenuProps = {
     onManageRealm: () => void;
@@ -85,7 +85,7 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
                     RE<span className="Slash">/\</span>LM
                 </h1>
 
-                <button disabled title="Start a Realm first">
+                <button disabled title="Start a REALM first">
                     Continue
                 </button>
                 <button disabled title="Work in Progress">
@@ -93,22 +93,22 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
                 </button>
 
                 <button
-                    title="Host a Realm for you and your friends to enjoy with you being the Realmkeeper"
+                    title="Host a REALM for you and your friends to enjoy with you being the REALM-keeper"
                     onClick={() => open('host')}
                 >
-                    Host Realm
+                    Host REALM
                 </button>
                 <button
-                    title="Join a Realm where your friend is the Realmkeeper and roleplay together"
+                    title="Join a REALM where your friend is the REALM-keeper and roleplay together"
                     onClick={() => open('join')}
                 >
-                    Join Realm
+                    Join REALM
                 </button>
                 <button
-                    title="Create a brand new Realm you can play with your friends or edit an existing Realm"
+                    title="Create a brand new REALM you can play with your friends or edit an existing REALM"
                     onClick={() => onManageRealm()}
                 >
-                    Manage Realms
+                    Manage REALMS
                 </button>
                 <button
                     title="Create a brand new Character you can play or edit an existing Character"
@@ -135,9 +135,17 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
             </div>
 
             {/* POPUPS */}
-            {openMenu === 'host' && <></>}
+            {openMenu === 'host' && (
+                <>
+                    <img src="https://http.cat/501" alt="" />
+                </>
+            )}
 
-            {openMenu === 'join' && <></>}
+            {openMenu === 'join' && (
+                <>
+                    <img src="https://http.dog/501.jpg" alt="" />
+                </>
+            )}
 
             {openMenu === 'settings' && (
                 <SettingsPopup closePopup={close} settingsChanged={refresh} />

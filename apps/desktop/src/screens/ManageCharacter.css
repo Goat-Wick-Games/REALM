@@ -3,7 +3,7 @@
     width: 100vw;
     height: 100vh;
 }
-.ManageCharacter .back-btn {
+.ManageCharacter .BackBtn {
     position: absolute;
     left: 30px;
     top: 30px;
@@ -19,7 +19,7 @@
     z-index: 2;
     cursor: pointer;
 }
-.ManageCharacter .back-btn:hover {
+.ManageCharacter .BackBtn:hover {
     transform: scale(1.1);
 }
 .ManageCharacter .Title {

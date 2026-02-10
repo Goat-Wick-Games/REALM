@@ -17,6 +17,10 @@ const CharacterSelect: React.FC<CharacterSelectProps> = (props) => {
             return;
         }
 
+        characterList.sort(
+            (a, b) => new Date(b.lastPlayed).getTime() - new Date(a.lastPlayed).getTime(),
+        );
+
         if (!name.trim()) {
             setFilteredCharacters(characterList);
             return;
@@ -27,9 +31,14 @@ const CharacterSelect: React.FC<CharacterSelectProps> = (props) => {
         const regex = new RegExp(escapedName, 'i');
 
         setFilteredCharacters(
-            characterList.filter(
-                (char) => regex.test(char.name) || regex.test(char.class) || regex.test(char.race),
-            ),
+            characterList
+                .filter(
+                    (char) =>
+                        regex.test(char.name) || regex.test(char.class) || regex.test(char.race),
+                )
+                .sort(
+                    (a, b) => new Date(b.lastPlayed).getTime() - new Date(a.lastPlayed).getTime(),
+                ),
         );
     }, [name, characterList]);
 

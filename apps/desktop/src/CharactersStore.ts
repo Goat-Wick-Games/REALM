@@ -1,12 +1,12 @@
+import { AppStore } from './AppStore';
 import races from './fix-data/character-bases.json';
-import { AppStore } from './storage';
 
 export class CharactersStore {
     private appStore: AppStore;
     private key = 'characters';
 
     constructor() {
-        this.appStore = new AppStore('characters.json'); // optional custom file
+        this.appStore = new AppStore(`${this.key}.json`); // optional custom file
     }
 
     /** Initialize the store */
@@ -25,7 +25,9 @@ export class CharactersStore {
         const characters = (await this.appStore.get<Character[]>(this.key)) ?? [];
 
         // Normalize every character and assign sequential IDs starting from 1
-        const normalized = characters.map((c, index) => this.normalizeCharacter(c, index + 1));
+        const normalized = characters.map((c: Character, index: number) =>
+            this.normalizeCharacter(c, index + 1),
+        );
 
         // Always save the normalized list to ensure consistency
         await this.appStore.set(this.key, normalized);
@@ -98,14 +100,6 @@ export class CharactersStore {
             class: closestMatch(character.class ?? '', classList) as Classes,
             race: closestMatch(character.race ?? '', raceList) as Races,
         };
-    }
-
-    /** Get a single character by name */
-    async getByName(name: string): Promise<Character | undefined> {
-        const characters = await this.getAll();
-        const char: Character | undefined = characters.find((c) => c.name === name);
-        if (!char) return undefined;
-        return char;
     }
 
     /** Add a new character */

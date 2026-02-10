@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { AppStore } from '../storage';
+import { AppStore } from '../AppStore';
 import { useTheme, type Theme } from '../theme/ThemeContext';
-import type { Display } from '../display';
-import { setDisplay } from '../display';
+import type { Display } from '../Display';
+import { setDisplay } from '../Display';
 import { toast } from 'react-toastify';
 import './SettingsPopup.css';
 

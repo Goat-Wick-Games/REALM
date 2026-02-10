@@ -3,9 +3,10 @@ import type { Screen } from '../types/screen';
 import IntroSmash from '../screens/IntroSmash';
 import MainMenu from '../ui/MainMenu';
 import ManageCharacter from '../screens/ManageCharacter';
+import ManageRealm from '../screens/ManageRealm';
 
 const ScreenRouter: React.FC = () => {
-    const [screen, setScreen] = useState<Screen>('menu');
+    const [screen, setScreen] = useState<Screen>('manage realm');
     const [showMainMenu, setShowMainMenu] = useState<boolean>(false);
     const [showIntro, setShowIntro] = useState<boolean>(true);
 
@@ -37,6 +38,8 @@ const ScreenRouter: React.FC = () => {
             );
         case 'manage character':
             return <ManageCharacter onBack={backToMainMenu} />;
+        case 'manage realm':
+            return <ManageRealm onBack={backToMainMenu} />;
         default:
             return null;
     }

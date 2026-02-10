@@ -1,0 +1,115 @@
+.ManageRealm {
+    color: rgb(var(--text-secondary));
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+.ManageRealm .BackBtn {
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    padding: 10px;
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    font-size: 2rem;
+    background-color: var(--btn-bg);
+    color: rgb(var(--text-primary));
+    margin-top: auto;
+    align-self: center;
+    z-index: 2;
+    cursor: pointer;
+}
+.ManageRealm .BackBtn:hover {
+    transform: scale(1.1);
+}
+.ManageRealm .Title {
+    align-self: center;
+    font-size: 5.5rem;
+    color: #7e7e7e;
+    text-shadow: #7e7e7e 0 0 5px;
+}
+.ManageRealm .Slash {
+    color: lightblue;
+    animation: slash-glow 5s infinite alternate;
+}
+@keyframes slash-glow {
+    from {
+        text-shadow: lightblue 0 5px 1px;
+    }
+    to {
+        text-shadow: lightblue 0 5px 20px;
+    }
+}
+
+.ManageRealm .Topbar {
+    display: flex;
+    position: absolute;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    height: 130px;
+    width: 100%;
+    top: 0;
+}
+.ManageRealm .layer-hole-1 {
+    transform: translate(var(--hole-1-x, 0), var(--hole-1-y, 0)) scale(0.68);
+}
+.ManageRealm .layer-hole-2 {
+    transform: translate(var(--hole-2-x, 0), var(--hole-2-y, 0)) scale(0.78);
+}
+.ManageRealm .layer-hole-3 {
+    transform: translate(var(--hole-3-x, 0), var(--hole-3-y, 0)) scale(0.92);
+}
+.ManageRealm .layer-hole-4 {
+    transform: translate(var(--hole-4-x, 0), var(--hole-4-y, 0)) scale(1);
+}
+.ManageRealm .layer-hole-5 {
+    transform: translate(var(--hole-5-x, 0), var(--hole-5-y, 0)) scale(1.02);
+}
+
+.ManageRealm .Content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+.ManageRealm .PlayArea,
+.ManageRealm .ListArea {
+    background-color: rgba(var(--bg-color), 0.4);
+    padding: 30px;
+    border-radius: 20px;
+    width: 400px;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.ManageRealm .PlayArea {
+    width: 800px;
+    height: 900px;
+    align-items: center;
+}
+.ManageRealm .PlayArea div:first-child {
+    width: 300px;
+    padding: 10px;
+}
+.ManageRealm .PlayArea img {
+    width: 200px;
+    height: 200px;
+    border-radius: 20px 0;
+    border: black 2px solid;
+}
+.ManageRealm .PlayArea img:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+.ManageRealm .PlayArea img:active {
+    transform: scale(1.01);
+}
+.ManageRealm .PlayArea > div,
+.ManageRealm .ListArea > div {
+    background-color: var(--panel-bg);
+    margin: 20px;
+    border-radius: 20px;
+}

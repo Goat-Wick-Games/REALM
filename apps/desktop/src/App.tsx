@@ -1,4 +1,4 @@
-import { loadDisplay } from './display';
+import { loadDisplay } from './Display';
 import ScreenRouter from './router/ScreenRouter';
 import { ToastContainer, Zoom } from 'react-toastify';
 import { useTheme } from './theme/ThemeContext';
