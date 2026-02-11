@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './CharacterSelect.css';
+import type { Character } from '@realm/core';
 
 type CharacterSelectProps = {
     characterList: Character[];

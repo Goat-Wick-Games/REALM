@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, type ReactNode } from 'react';
-import { AppStore } from '../AppStore';
+import { AppStore } from '@realm/storage';
 
 const settings = new AppStore('settings.json');
 

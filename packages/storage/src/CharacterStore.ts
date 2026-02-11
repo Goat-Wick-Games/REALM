@@ -1,7 +1,8 @@
 import { AppStore } from './AppStore';
-import races from './fix-data/character-bases.json';
+import basicData from '@realm/content';
+import type { Character, Races, Classes } from '@realm/core';
 
-export class CharactersStore {
+export class CharacterStore {
     private appStore: AppStore;
     private key = 'characters';
 
@@ -85,7 +86,7 @@ export class CharactersStore {
         let age = character.age;
 
         if (character && character.race) {
-            const maxAge = races[character.race].maxAge;
+            const maxAge = basicData.characterBases[character.race].maxAge;
             age = character.age > maxAge ? maxAge : character.age;
         }
 

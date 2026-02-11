@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './RealmElement.css';
+import type { Realm } from '@realm/core';
 
 type RealmElementProps = {
     realmList: Realm[];

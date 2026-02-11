@@ -1,4 +1,7 @@
-type Character = {
+import { Classes } from './class';
+import { Races } from './races';
+
+export type Character = {
     id: string;
     name: string;
     class: Classes;

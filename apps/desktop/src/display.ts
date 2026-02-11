@@ -1,5 +1,5 @@
 import { getCurrentWindow, Window } from '@tauri-apps/api/window';
-import { AppStore } from './AppStore';
+import { AppStore } from '@realm/storage';
 
 export type Display = 'fullscreen' | 'windowed fullscreen' | 'windowed';
 

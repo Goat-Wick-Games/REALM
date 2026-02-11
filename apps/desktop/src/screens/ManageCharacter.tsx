@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '../theme/ThemeContext';
 import './ManageCharacter.css';
-import races from '../fix-data/character-bases.json';
-import classes from '../fix-data/class-bases.json';
-import { CharactersStore } from '../CharactersStore';
+import type { Character, Races, Classes } from '@realm/core';
 import { toast } from 'react-toastify';
+import basicData from '@realm/content';
 import CharacterSelect from '../components/CharacterSelect';
-import { AppStore } from '../AppStore';
+import { AppStore } from '@realm/storage';
+import { CharacterStore } from '@realm/storage';
 
 type ManageCharacterProps = {
     onBack: () => void;
@@ -18,7 +18,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
     const bobFrame = useRef<number>(0);
     const bobStart = useRef<number>(performance.now());
     const containerRef = useRef<HTMLElement | null>(null);
-    const charactersStore = useRef(new CharactersStore()).current;
+    const charactersStore = useRef(new CharacterStore()).current;
 
     const [reducedMotion, setReducedMotion] = useState<boolean>(true);
     const settings = useRef(new AppStore('settings.json')).current;
@@ -70,8 +70,8 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
     }, [character]);
 
     useEffect(() => {
-        const raceTraits = race ? races[race].traits : undefined;
-        const classTraits = $class ? classes[$class].traits : undefined;
+        const raceTraits = race ? basicData.characterBases[race].traits : undefined;
+        const classTraits = $class ? basicData.classBases[$class].traits : undefined;
 
         const totalTraits = {
             Reflexes: (raceTraits?.Reflexes ?? 0) + (classTraits?.Reflexes ?? 0),
@@ -246,7 +246,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                             className="CharacterAge"
                             value={age === -1 ? Number.POSITIVE_INFINITY : age}
                             onChange={(e) => {
-                                const maxValue = race ? races[race].maxAge : 0;
+                                const maxValue = race ? basicData.characterBases[race].maxAge : 0;
                                 let val = e.target.value;
                                 console.log(val);
                                 if (val.startsWith('0')) val = val.replace('0', '');
@@ -284,7 +284,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                             <option value="" hidden>
                                 Choose Race
                             </option>
-                            {Object.entries(races).map((race, i) => (
+                            {Object.entries(basicData.characterBases).map((race, i) => (
                                 <option key={i} value={race[0]}>
                                     {capitalizeFirstLetter(race[0])}
                                 </option>
@@ -299,7 +299,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                             <option value="" hidden>
                                 Choose Class
                             </option>
-                            {Object.entries(classes).map(($class, i) => (
+                            {Object.entries(basicData.classBases).map(($class, i) => (
                                 <option key={i} value={$class[0]}>
                                     {capitalizeFirstLetter($class[0])}
                                 </option>

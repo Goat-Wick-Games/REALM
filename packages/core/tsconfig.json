@@ -1,14 +1,19 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "declaration": true,
-    "outDir": "dist",
-    "strict": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": "."
-  },
-  "include": ["src"]
+    "compilerOptions": {
+        "composite": true,
+        "target": "ES2020",
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "declaration": true,
+        "outDir": "dist",
+        "strict": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "baseUrl": "."
+    },
+    "include": [
+        "src",
+        "../../apps/desktop/src/types/global.d.ts",
+        "../../apps/desktop/src/types/screen.d.ts"
+    ]
 }

@@ -1,15 +1,5 @@
 {
-  "compilerOptions": {
-    "paths": {
-      "@mythica/core": ["../../packages/core/src"],
-      "@mythica/board": ["../../packages/board/src"],
-      "@mythica/storage": ["../../packages/storage/src"],
-      "@mythica/net": ["../../packages/net/src"]
-    }
-  },
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+    "compilerOptions": {},
+    "files": [],
+    "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }

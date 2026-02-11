@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './ManageRealm.css';
-import { AppStore } from '../AppStore';
+import type { Realm } from '@realm/core';
+import { AppStore } from '@realm/storage';
 import { useTheme } from '../theme/ThemeContext';
 import RealmElement from '../components/RealmElement';
 
@@ -13,6 +14,7 @@ const ManageRealm: React.FC<ManageRealmProps> = (props) => {
 
     const containerRef = useRef<HTMLElement | null>(null);
     const [reducedMotion, setReducedMotion] = useState<boolean>(true);
+    const [selectedRealm, setSelectedRealm] = useState<Realm | null>();
     const settings = useRef(new AppStore('settings.json')).current;
     const { theme } = useTheme();
 
@@ -51,7 +53,14 @@ const ManageRealm: React.FC<ManageRealmProps> = (props) => {
             <div className="Content">
                 <div className="ListArea">
                     <div className="InnerArea">
-                        <RealmElement realmList={[]} />
+                        <RealmElement
+                            selectedRealm={(newRealm, realm) => {
+                                newRealm
+                                    ? setSelectedRealm(null)
+                                    : realm && setSelectedRealm(realm);
+                            }}
+                            realmList={[]}
+                        />
                     </div>
                 </div>
                 <div className="PlayArea">
@@ -60,7 +69,7 @@ const ManageRealm: React.FC<ManageRealmProps> = (props) => {
                         <img src="" alt="" />
                     </div>
                     <div className="Players">
-                        <h3>Players in your REALM</h3>
+                        <h3>{!selectedRealm ? 'New Realm' : selectedRealm.name}</h3>
                     </div>
                     <div className="Play">
                         <button>Play</button>

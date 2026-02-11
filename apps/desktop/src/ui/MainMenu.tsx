@@ -4,7 +4,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import SettingsPopup from '../components/SettingsPopup';
 import ExitPopup from '../components/ExitPopup';
 import { useTheme } from '../theme/ThemeContext';
-import { AppStore } from '../AppStore';
+import { AppStore } from '@realm/storage';
 
 type menuTypes = 'host' | 'join' | 'settings' | 'exit' | '';
 

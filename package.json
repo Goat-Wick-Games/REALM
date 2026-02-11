@@ -1,26 +1,25 @@
 {
-  "name": "mythica",
-  "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start:desktop": "pnpm --filter desktop start",
-    "dev:desktop": "pnpm --filter desktop dev",
-    "app.dev:desktop": "pnpm --filter desktop app.dev",
-    "app.init:desktop": "pnpm --filter desktop app.init",
-    "build:desktop": "pnpm --filter desktop build",
-    "lint:desktop": "pnpm --filter desktop lint",
-    "preview:desktop": "pnpm --filter desktop preview",
-    "": "",
-    "build:all": "pnpm -r run build && pnpm build:desktop",
-    "": "",
-    "clean:all": "rimraf packages/*/dist apps/desktop/dist"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.27.0",
-  "devDependencies": {
-    "typescript": "~5.9.3"
-  }
+    "name": "realm",
+    "version": "0.1.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start:desktop": "pnpm --filter desktop start",
+        "dev:desktop": "pnpm --filter desktop dev",
+        "app.dev:desktop": "pnpm --filter desktop app.dev",
+        "app.init:desktop": "pnpm --filter desktop app.init",
+        "build:desktop": "pnpm --filter desktop build",
+        "lint:desktop": "pnpm --filter desktop lint",
+        "preview:desktop": "pnpm --filter desktop preview",
+        "": "",
+        "build:all": "pnpm -r run build && pnpm build:desktop",
+        "build:packages": "pnpm --filter \"./packages/*\" -r run build"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "packageManager": "pnpm@10.27.0",
+    "devDependencies": {
+        "typescript": "~5.9.3"
+    }
 }

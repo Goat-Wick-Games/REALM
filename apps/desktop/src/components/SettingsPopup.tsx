@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AppStore } from '../AppStore';
+import { AppStore } from '@realm/storage';
 import { useTheme, type Theme } from '../theme/ThemeContext';
 import type { Display } from '../Display';
 import { setDisplay } from '../Display';
