@@ -5,7 +5,7 @@ import type { Character, Races, Classes } from '@realm/core';
 import { toast } from 'react-toastify';
 import basicData from '@realm/content';
 import CharacterSelect from '../components/CharacterSelect';
-import { AppStore } from '@realm/storage';
+import { SettingsStore } from '@realm/storage';
 import { CharacterStore } from '@realm/storage';
 
 type ManageCharacterProps = {
@@ -21,7 +21,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
     const charactersStore = useRef(new CharacterStore()).current;
 
     const [reducedMotion, setReducedMotion] = useState<boolean>(true);
-    const settings = useRef(new AppStore('settings.json')).current;
+    const settings = useRef(new SettingsStore('settings.json')).current;
     const { theme } = useTheme();
 
     const [showSelect, setShowSelect] = useState<boolean>(false);
@@ -151,6 +151,50 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         });
     };
 
+    const exportCharacter = async () => {
+        if (!character) toast.error('No Character Selected (how?)');
+        if (!race) toast.error('Select their race');
+        if (!$class) toast.error('Select their class');
+        if (!name) toast.error('Give them a name');
+        if (!character || !name || !race || !$class) return;
+
+        await charactersStore.exportToJSON(character.id);
+        const updatedList = await charactersStore.getAll();
+        clearSheet();
+        setCharacterList(updatedList);
+    };
+
+    const importCharacter = async () => {
+        const imported = await charactersStore.importFromJSON();
+        if (!imported.result)
+            return toast.error(`Could not import character reason: ${imported.reason}`);
+        if (imported.character === undefined) return;
+        toast.info(imported.reason);
+        const chars = await charactersStore.getAll();
+        setCharacterList(chars);
+        const importedCharacter = imported.character;
+        const character = chars.find(
+            (c) =>
+                c.name === importedCharacter.name &&
+                c.bio === importedCharacter.bio &&
+                c.class === importedCharacter.class &&
+                c.race === importedCharacter.race,
+        );
+        setCharacter(character);
+    };
+
+    const deleteCharacter = async (id: number) => {
+        const success = await charactersStore.deleteCharacter(id);
+        if (!success) return toast.error('Could not delete character');
+        toast.info('Character deleted successfully');
+        const chars = await charactersStore.getAll();
+        setCharacterList(chars);
+        setShowSelect(false);
+        console.log(character?.id);
+        console.log(id);
+        if (character?.id === id) clearSheet();
+    };
+
     const editCharacter = async () => {
         if (!character) toast.error('No Character Selected (how?)');
         if (!race) toast.error('Select their race');
@@ -158,15 +202,14 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         if (!name) toast.error('Give them a name');
         if (!character || !name || !race || !$class) return;
 
-        const newChar: Partial<Character> = {
+        await charactersStore.update(
+            character.id,
             name,
-            age: age === Number.POSITIVE_INFINITY ? -1 : age,
-            bio,
+            $class,
             race,
-            class: $class,
-        };
-
-        await charactersStore.update(character.id, newChar);
+            age === Number.POSITIVE_INFINITY ? -1 : age,
+            bio,
+        );
         const updatedList = await charactersStore.getAll();
         clearSheet();
         setCharacterList(updatedList);
@@ -178,21 +221,13 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         if (!name) toast.error('Give them a name');
         if (!name || !race || !$class) return;
 
-        const date: string = new Date().toISOString();
-        const charId = await charactersStore.getMaxId();
-
-        const newChar: Character = {
-            id: `c${charId.toString().padStart(2, '0')}`,
+        await charactersStore.add(
             name,
+            $class,
             race,
-            class: $class,
-            age: age === Number.POSITIVE_INFINITY ? -1 : age,
+            age === Number.POSITIVE_INFINITY ? -1 : age,
             bio,
-            createdAt: date,
-            lastPlayed: 'never',
-        };
-
-        await charactersStore.add(newChar);
+        );
         const updatedList = await charactersStore.getAll();
         clearSheet();
         setCharacterList(updatedList);
@@ -248,7 +283,6 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                             onChange={(e) => {
                                 const maxValue = race ? basicData.characterBases[race].maxAge : 0;
                                 let val = e.target.value;
-                                console.log(val);
                                 if (val.startsWith('0')) val = val.replace('0', '');
                                 val = val.replace('-', '');
 
@@ -324,13 +358,23 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                         </div>
                     </div>
                     {!character ? (
-                        <button className="SaveButton" onClick={saveCharacter}>
-                            Save
-                        </button>
+                        <div className="Control">
+                            <button className="SaveButton" onClick={saveCharacter}>
+                                Save
+                            </button>
+                            <button className="SaveButton" onClick={importCharacter}>
+                                Import
+                            </button>
+                        </div>
                     ) : (
-                        <button className="SaveButton" onClick={editCharacter}>
-                            Edit
-                        </button>
+                        <div className="Control">
+                            <button className="SaveButton" onClick={editCharacter}>
+                                Edit
+                            </button>
+                            <button className="SaveButton" onClick={exportCharacter}>
+                                Export
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>
@@ -346,6 +390,8 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                         !character ? !exit && clearSheet() : setCharacter(character);
                         setShowSelect(false);
                     }}
+                    deleteCharacter={deleteCharacter}
+                    importCharacter={importCharacter}
                 />
             )}
         </main>

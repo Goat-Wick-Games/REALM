@@ -1,9 +1,9 @@
 import { load, Store } from '@tauri-apps/plugin-store';
 
-export class AppStore {
+export class SettingsStore {
     private store!: Store;
     private filename!: string;
-    constructor(filename = 'store.json') {
+    constructor(filename = 'settings.json') {
         this.filename = filename;
     }
 

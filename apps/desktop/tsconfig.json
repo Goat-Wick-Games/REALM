@@ -1,5 +1,13 @@
 {
-    "compilerOptions": {},
+    "compilerOptions": {
+        "paths": {
+            "@realm/core": ["../../packages/core/src"],
+            "@realm/board": ["../../packages/board/src"],
+            "@realm/storage": ["../../packages/storage/src"],
+            "@realm/content": ["../../packages/content/src"],
+            "@realm/net": ["../../packages/net/src"]
+        }
+    },
     "files": [],
     "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
 }

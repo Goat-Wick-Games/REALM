@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, type ReactNode } from 'react';
-import { AppStore } from '@realm/storage';
+import { SettingsStore } from '@realm/storage';
 
-const settings = new AppStore('settings.json');
+const settings = new SettingsStore('settings.json');
 
 export type Theme = 'light' | 'dark' | 'system';
 

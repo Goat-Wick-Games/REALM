@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { AppStore } from '@realm/storage';
+import { SettingsStore } from '@realm/storage';
 import { useTheme, type Theme } from '../theme/ThemeContext';
 import type { Display } from '../Display';
 import { setDisplay } from '../Display';
@@ -12,7 +12,7 @@ type SettingsPopupProps = {
 };
 
 const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
-    const settings = useRef(new AppStore('settings.json')).current;
+    const settings = useRef(new SettingsStore('settings.json')).current;
     const { setTheme } = useTheme();
     const { closePopup, settingsChanged } = props;
     const [music, setMusic] = useState<number>();
@@ -146,7 +146,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = (props) => {
                     </div>
                 </div>
                 <div className="music">
-                    Reduced reducedMotion:
+                    Reduced Motion:
                     <div>
                         <input
                             type="checkbox"

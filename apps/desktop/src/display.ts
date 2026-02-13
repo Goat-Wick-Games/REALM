@@ -1,9 +1,9 @@
 import { getCurrentWindow, Window } from '@tauri-apps/api/window';
-import { AppStore } from '@realm/storage';
+import { SettingsStore } from '@realm/storage';
 
 export type Display = 'fullscreen' | 'windowed fullscreen' | 'windowed';
 
-const settings = new AppStore('settings.json');
+const settings = new SettingsStore('settings.json');
 
 export const setDisplay = async (display: Display) => {
     await settings.init();

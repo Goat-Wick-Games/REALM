@@ -4,7 +4,7 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
 import SettingsPopup from '../components/SettingsPopup';
 import ExitPopup from '../components/ExitPopup';
 import { useTheme } from '../theme/ThemeContext';
-import { AppStore } from '@realm/storage';
+import { SettingsStore } from '@realm/storage';
 
 type menuTypes = 'host' | 'join' | 'settings' | 'exit' | '';
 
@@ -15,7 +15,7 @@ type MainMenuProps = {
 
 const MainMenu: React.FC<MainMenuProps> = (props) => {
     const containerRef = useRef<HTMLElement | null>(null);
-    const settings = useRef(new AppStore('settings.json')).current;
+    const settings = useRef(new SettingsStore('settings.json')).current;
     const [reducedMotion, setReducedMotion] = useState<boolean>(true);
     const { onManageCharacter, onManageRealm } = props;
     const [openMenu, setOpenMenu] = useState<menuTypes>('');

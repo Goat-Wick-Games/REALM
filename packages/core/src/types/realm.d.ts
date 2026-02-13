@@ -1,11 +1,6 @@
-import type { map } from './map';
-import { Player } from './player';
-
 export type Realm = {
-    id: string;
+    id: number;
     name: string;
-    maps: map[];
-    players: Player[];
     createdAt: string;
     lastPlayed: string;
 };

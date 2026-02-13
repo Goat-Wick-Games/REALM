@@ -1,5 +1,11 @@
+import { Trigger } from './trigger';
+
 export type Tile = {
-    X: number;
-    Y: number;
+    id: number;
+    x: number;
+    y: number;
     tileName: string;
+    trigger?: Trigger;
+    walkable: boolean;
+    mapId: number;
 };

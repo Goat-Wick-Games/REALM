@@ -6,7 +6,7 @@ import ManageCharacter from '../screens/ManageCharacter';
 import ManageRealm from '../screens/ManageRealm';
 
 const ScreenRouter: React.FC = () => {
-    const [screen, setScreen] = useState<Screen>('manage realm');
+    const [screen, setScreen] = useState<Screen>('manage character');
     const [showMainMenu, setShowMainMenu] = useState<boolean>(false);
     const [showIntro, setShowIntro] = useState<boolean>(true);
 

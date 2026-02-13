@@ -1,139 +1,131 @@
-import { AppStore } from './AppStore';
-import basicData from '@realm/content';
-import type { Character, Races, Classes } from '@realm/core';
+import Database from '@tauri-apps/plugin-sql';
+import { open } from '@tauri-apps/plugin-dialog';
+import type { Character, Classes, Races } from '@realm/core';
+import { BaseDirectory, readFile, readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 
 export class CharacterStore {
-    private appStore: AppStore;
-    private key = 'characters';
+    private db!: Database;
 
-    constructor() {
-        this.appStore = new AppStore(`${this.key}.json`); // optional custom file
-    }
-
-    /** Initialize the store */
     async init() {
-        await this.appStore.init();
-        // Ensure key exists
-        const existing = await this.appStore.get<Character[]>(this.key);
-        if (!existing) {
-            await this.appStore.set(this.key, []);
-            await this.appStore.save();
-        }
+        this.db = await Database.load('sqlite:characters.db');
+
+        await this.db.execute(`
+            CREATE TABLE IF NOT EXISTS
+                characters(
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
+                    bio TEXT,
+                    class TEXT,
+                    race TEXT,
+                    age INTEGER NOT NULL,
+                    createdAt TEXT,
+                    lastPlayed TEXT DEFAULT "never")
+        `);
     }
 
-    /** Get all characters */
-    async getAll(): Promise<Character[]> {
-        const characters = (await this.appStore.get<Character[]>(this.key)) ?? [];
+    public async getAll(): Promise<Character[]> {
+        return (await this.db.select(`SELECT * FROM characters`)) as Character[];
+    }
 
-        // Normalize every character and assign sequential IDs starting from 1
-        const normalized = characters.map((c: Character, index: number) =>
-            this.normalizeCharacter(c, index + 1),
+    public async add(name: string, $class: Classes, race: Races, age: number, bio: string) {
+        const date = new Date().toISOString().split('T')[0];
+        await this.db.execute(
+            `INSERT INTO characters(name, class, race, age, bio, createdAt)
+                VALUES(?,?,?,?,?,?)`,
+            [name, $class, race, age, bio, date],
         );
-
-        // Always save the normalized list to ensure consistency
-        await this.appStore.set(this.key, normalized);
-        await this.appStore.save();
-
-        return normalized;
     }
 
-    private normalizeCharacter(character: Character, nextId: number): Character {
-        const raceList = ['', 'orc', 'elf', 'human', 'fiend', 'cyborg'];
-        const classList = ['', 'barbarian', 'druid', 'assassin', 'hunter', 'craftsman'];
-        const now = new Date().toISOString();
+    public async update(
+        id: number,
+        name: string,
+        $class: Classes,
+        race: Races,
+        age: number,
+        bio: string,
+    ) {
+        const date = new Date().toISOString().split('T')[0];
+        await this.db.execute(
+            `UPDATE characters
+                SET name = ?, class = ?, race = ?, age = ?, bio = ?
+                WHERE id = ?`,
+            [name, $class, race, age, bio, id],
+        );
+    }
 
-        // Simple Levenshtein distance
-        function levenshtein(firstText: string, secondText: string): number {
-            const distance: number[][] = Array(firstText.length + 1)
-                .fill(0)
-                .map(() => Array(secondText.length + 1).fill(0));
+    public async deleteCharacter(id: number): Promise<boolean> {
+        const result = await this.db.execute(`DELETE FROM characters WHERE id = ?`, [id]);
+        return result.rowsAffected > 0;
+    }
 
-            for (let i = 0; i <= firstText.length; i++) distance[i][0] = i;
-            for (let j = 0; j <= secondText.length; j++) distance[0][j] = j;
+    /** Export all characters to a JSON file */
+    public async exportToJSON(id: number) {
+        const characters = (await this.db.select(`SELECT * FROM characters WHERE id = ?`, [
+            id,
+        ])) as Character[];
 
-            for (let i = 1; i <= firstText.length; i++) {
-                for (let j = 1; j <= secondText.length; j++) {
-                    distance[i][j] =
-                        firstText[i - 1] === secondText[j - 1]
-                            ? distance[i - 1][j - 1]
-                            : Math.min(
-                                  distance[i - 1][j - 1], // substitution
-                                  distance[i][j - 1], // insertion
-                                  distance[i - 1][j], // deletion
-                              ) + 1;
-                }
-            }
-            return distance[firstText.length][secondText.length];
+        if (!characters.length) return;
+
+        const character = JSON.stringify(characters[0]);
+
+        await writeTextFile(`${characters[0].name}.json`, character, {
+            baseDir: BaseDirectory.Download,
+            create: true,
+        });
+    }
+
+    /** Import characters from a JSON file */
+    public async importFromJSON(): Promise<{
+        result: boolean;
+        reason: string;
+        character?: Character;
+    }> {
+        try {
+            const selected = await open({
+                multiple: false,
+                directory: false,
+                defaultPath: BaseDirectory.Download.toString(),
+                filters: [
+                    {
+                        name: 'Json files',
+                        extensions: ['json'],
+                    },
+                ],
+            });
+
+            if (!selected) return { result: false, reason: 'nothing selected' };
+
+            const content = await readTextFile(selected, { baseDir: BaseDirectory.AppData });
+
+            // user selected a single file
+            const char: Character = JSON.parse(content);
+
+            // Check for duplicates by name, bio, race, and class
+            const existing = (await this.db.select(
+                `SELECT * FROM characters WHERE name = ? AND bio = ? AND race = ? AND class = ?`,
+                [char.name, char.bio, char.race, char.class],
+            )) as Character[];
+
+            if (existing.length > 0) return { result: false, reason: 'character already exists' };
+
+            // Insert character
+            await this.db.execute(
+                `INSERT INTO characters(name, bio, class, race, age, createdAt, lastPlayed)
+                VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    char.name,
+                    char.bio,
+                    char.class as Classes,
+                    char.race as Races,
+                    char.age,
+                    char.createdAt ?? new Date().toISOString(),
+                    char.lastPlayed ?? 'never',
+                ],
+            );
+            return { result: true, reason: 'character added', character: char };
+        } catch (err) {
+            console.error(`Failed to import character`, err);
+            return { result: false, reason: 'error during import' };
         }
-
-        // Pick closest match from a list
-        function closestMatch(value: string, list: string[]): string {
-            if (!value) return '';
-            let best = '';
-            let bestDist = Infinity;
-            for (const option of list) {
-                const dist = levenshtein(value.toLowerCase(), option.toLowerCase());
-                if (dist < bestDist) {
-                    bestDist = dist;
-                    best = option;
-                }
-            }
-
-            // Use proportional threshold: allow more edits for longer names
-            return bestDist <= Math.max(1, Math.floor(best.length * 0.4)) ? best : '';
-        }
-
-        let age = character.age;
-
-        if (character && character.race) {
-            const maxAge = basicData.characterBases[character.race].maxAge;
-            age = character.age > maxAge ? maxAge : character.age;
-        }
-
-        return {
-            // ALWAYS assign a fresh ID
-            id: `c${nextId.toString().padStart(3, '0')}`,
-            createdAt: character.createdAt ?? now,
-            lastPlayed: character.lastPlayed ?? now,
-            name: character.name ?? '',
-            age: age ?? 0,
-            bio: character.bio ?? '',
-            class: closestMatch(character.class ?? '', classList) as Classes,
-            race: closestMatch(character.race ?? '', raceList) as Races,
-        };
-    }
-
-    /** Add a new character */
-    async add(character: Character): Promise<void> {
-        const characters = await this.getAll();
-        characters.push(character);
-        await this.appStore.set(this.key, characters);
-        await this.appStore.save();
-    }
-
-    /** Update an existing character by name */
-    async update(id: string, updated: Partial<Character>): Promise<void> {
-        const characters = await this.getAll();
-        const index = characters.findIndex((c) => c.id === id);
-        if (index === -1) return;
-        characters[index] = { ...characters[index], ...updated };
-        await this.appStore.set(this.key, characters);
-        await this.appStore.save();
-    }
-
-    /** Delete a character */
-    async remove(name: string): Promise<void> {
-        const characters = await this.getAll();
-        const filtered = characters.filter((c) => c.name !== name);
-        await this.appStore.set(this.key, filtered);
-        await this.appStore.save();
-    }
-
-    async getMaxId(): Promise<number> {
-        const allChars = await this.getAll();
-
-        return allChars.length > 0
-            ? Math.max(...allChars.map((c) => (c.id ? parseInt(c.id.slice(1)) : 0))) + 1
-            : 0;
     }
 }

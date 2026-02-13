@@ -5,11 +5,27 @@
     "windows": ["main"],
     "permissions": [
         "store:default",
+        "shell:default",
         "core:window:allow-set-decorations",
         "core:window:allow-set-fullscreen",
         "core:window:allow-unmaximize",
         "core:window:allow-maximize",
         "core:window:allow-close",
-        "core:default"
+        "core:default",
+        "sql:default",
+        "sql:allow-execute",
+        "dialog:default",
+        "fs:write-all",
+        "fs:read-all",
+        "fs:scope",
+
+        {
+            "identifier": "fs:write-all",
+            "allow": [{ "path": "$DOWNLOAD/*" }]
+        },
+        {
+            "identifier": "fs:scope",
+            "allow": [{ "path": "$APPDATA/Roaming/com.realm.tauri/*" }]
+        }
     ]
 }

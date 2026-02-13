@@ -13,11 +13,11 @@
         "app.init": "tauri init"
     },
     "dependencies": {
-        "@realm/core": "workspace:*",
-        "@realm/storage": "workspace:*",
-        "@realm/net": "workspace:*",
         "@realm/board": "workspace:*",
         "@realm/content": "workspace:*",
+        "@realm/core": "workspace:*",
+        "@realm/net": "workspace:*",
+        "@realm/storage": "workspace:*",
         "@tauri-apps/api": "^2.9.1",
         "@tauri-apps/plugin-store": "~2.4.2",
         "react": "^19.2.0",

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './ManageRealm.css';
 import type { Realm } from '@realm/core';
-import { AppStore } from '@realm/storage';
+import { SettingsStore } from '@realm/storage';
 import { useTheme } from '../theme/ThemeContext';
 import RealmElement from '../components/RealmElement';
 
@@ -15,7 +15,7 @@ const ManageRealm: React.FC<ManageRealmProps> = (props) => {
     const containerRef = useRef<HTMLElement | null>(null);
     const [reducedMotion, setReducedMotion] = useState<boolean>(true);
     const [selectedRealm, setSelectedRealm] = useState<Realm | null>();
-    const settings = useRef(new AppStore('settings.json')).current;
+    const settings = useRef(new SettingsStore('settings.json')).current;
     const { theme } = useTheme();
 
     useEffect(() => {

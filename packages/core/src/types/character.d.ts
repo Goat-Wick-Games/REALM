@@ -2,7 +2,7 @@ import { Classes } from './class';
 import { Races } from './races';
 
 export type Character = {
-    id: string;
+    id: number;
     name: string;
     class: Classes;
     race: Races;
