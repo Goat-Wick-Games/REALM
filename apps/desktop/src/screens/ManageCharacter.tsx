@@ -158,21 +158,33 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         if (!name) toast.error('Give them a name');
         if (!character || !name || !race || !$class) return;
 
-        await charactersStore.exportToJSON(character.id);
+        const result: { result: boolean; reason: string } = await charactersStore.exportToJSON(
+            character.id,
+        );
+
+        if (!result.result)
+            return toast.error(`Could not export character reason: ${result.reason}`);
+
+        toast.info(result.reason);
+
         const updatedList = await charactersStore.getAll();
         clearSheet();
         setCharacterList(updatedList);
     };
 
     const importCharacter = async () => {
-        const imported = await charactersStore.importFromJSON();
-        if (!imported.result)
-            return toast.error(`Could not import character reason: ${imported.reason}`);
-        if (imported.character === undefined) return;
-        toast.info(imported.reason);
+        const result: { result: boolean; reason: string; character?: Character } =
+            await charactersStore.importFromJSON();
+
+        if (!result.result)
+            return toast.error(`Could not import character reason: ${result.reason}`);
+
+        if (result.character === undefined) return;
+
+        toast.info(result.reason);
+
         const chars = await charactersStore.getAll();
-        setCharacterList(chars);
-        const importedCharacter = imported.character;
+        const importedCharacter = result.character;
         const character = chars.find(
             (c) =>
                 c.name === importedCharacter.name &&
@@ -180,6 +192,7 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                 c.class === importedCharacter.class &&
                 c.race === importedCharacter.race,
         );
+        setCharacterList(chars);
         setCharacter(character);
     };
 

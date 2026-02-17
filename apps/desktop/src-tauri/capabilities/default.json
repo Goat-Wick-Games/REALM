@@ -18,10 +18,15 @@
         "fs:write-all",
         "fs:read-all",
         "fs:scope",
+        "opener:allow-open-path",
 
         {
             "identifier": "fs:write-all",
             "allow": [{ "path": "$DOWNLOAD/*" }]
+        },
+        {
+            "identifier": "opener:allow-open-path",
+            "allow": [{ "path": "$DOWNLOAD" }]
         },
         {
             "identifier": "fs:scope",

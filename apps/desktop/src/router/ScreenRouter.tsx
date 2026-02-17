@@ -4,9 +4,10 @@ import IntroSmash from '../screens/IntroSmash';
 import MainMenu from '../ui/MainMenu';
 import ManageCharacter from '../screens/ManageCharacter';
 import ManageRealm from '../screens/ManageRealm';
+import GameScreen from '../screens/GameScreen';
 
 const ScreenRouter: React.FC = () => {
-    const [screen, setScreen] = useState<Screen>('manage character');
+    const [screen, setScreen] = useState<Screen>('game');
     const [showMainMenu, setShowMainMenu] = useState<boolean>(false);
     const [showIntro, setShowIntro] = useState<boolean>(true);
 
@@ -40,6 +41,8 @@ const ScreenRouter: React.FC = () => {
             return <ManageCharacter onBack={backToMainMenu} />;
         case 'manage realm':
             return <ManageRealm onBack={backToMainMenu} />;
+        case 'game':
+            return <GameScreen onBack={backToMainMenu} />;
         default:
             return null;
     }

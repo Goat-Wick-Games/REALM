@@ -1,7 +1,9 @@
 import Database from '@tauri-apps/plugin-sql';
 import { open } from '@tauri-apps/plugin-dialog';
 import type { Character, Classes, Races } from '@realm/core';
-import { BaseDirectory, readFile, readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
+import { BaseDirectory, readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
+import { openPath } from '@tauri-apps/plugin-opener';
+import { downloadDir } from '@tauri-apps/api/path';
 
 export class CharacterStore {
     private db!: Database;
@@ -59,19 +61,33 @@ export class CharacterStore {
     }
 
     /** Export all characters to a JSON file */
-    public async exportToJSON(id: number) {
-        const characters = (await this.db.select(`SELECT * FROM characters WHERE id = ?`, [
-            id,
-        ])) as Character[];
+    public async exportToJSON(id: number): Promise<{
+        result: boolean;
+        reason: string;
+    }> {
+        try {
+            const characters = (await this.db.select(`SELECT * FROM characters WHERE id = ?`, [
+                id,
+            ])) as Character[];
 
-        if (!characters.length) return;
+            if (!characters.length) return { result: false, reason: 'character not found' };
 
-        const character = JSON.stringify(characters[0]);
+            const character = JSON.stringify(characters[0]);
 
-        await writeTextFile(`${characters[0].name}.json`, character, {
-            baseDir: BaseDirectory.Download,
-            create: true,
-        });
+            const downloadDirPath = await downloadDir();
+
+            await openPath(downloadDirPath);
+
+            await writeTextFile(`${characters[0].name}.json`, character, {
+                baseDir: BaseDirectory.Download,
+                create: true,
+            });
+
+            return { result: true, reason: 'exported successfully' };
+        } catch (err) {
+            console.error(`Failed to import character`, err);
+            return { result: false, reason: 'error during import' };
+        }
     }
 
     /** Import characters from a JSON file */

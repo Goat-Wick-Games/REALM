@@ -13,6 +13,7 @@ fn main() {
         .plugin(fs_init())
         .plugin(StoreBuilder::default().build())
         .plugin(SqlBuilder::default().build())
+        .plugin(tauri_plugin_opener::init())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

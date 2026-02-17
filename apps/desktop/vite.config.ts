@@ -4,6 +4,9 @@ import path from 'path';
 
 export default defineConfig({
     plugins: [react()],
+    optimizeDeps: {
+        include: ['pixi.js'],
+    },
     resolve: {
         alias: {
             '@realm/core': path.resolve(__dirname, '../../packages/core/src'),
