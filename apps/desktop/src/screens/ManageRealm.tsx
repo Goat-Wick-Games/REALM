@@ -7,10 +7,11 @@ import RealmElement from '../components/RealmElement';
 
 type ManageRealmProps = {
     onBack: () => void;
+    onEditMap: () => void;
 };
 
 const ManageRealm: React.FC<ManageRealmProps> = (props) => {
-    const { onBack } = props;
+    const { onBack, onEditMap } = props;
 
     const containerRef = useRef<HTMLElement | null>(null);
     const [reducedMotion, setReducedMotion] = useState<boolean>(true);
@@ -66,7 +67,7 @@ const ManageRealm: React.FC<ManageRealmProps> = (props) => {
                 <div className="PlayArea">
                     <div className="Map">
                         <h3>Map of the world (click to edit)</h3>
-                        <img src="" alt="" />
+                        <img src="" alt="" onClick={onEditMap} />
                     </div>
                     <div className="Players">
                         <h3>{!selectedRealm ? 'New Realm' : selectedRealm.name}</h3>

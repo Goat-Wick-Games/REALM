@@ -29,7 +29,12 @@ textarea {
     box-sizing: border-box;
 }
 
+button {
+    box-shadow: 0 0 10px black inset;
+}
+
 button:hover {
+    box-shadow: 0 0 10px white inset;
     transform: scale(1.1) !important;
 }
 
