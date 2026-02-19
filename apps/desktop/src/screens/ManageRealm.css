@@ -90,7 +90,7 @@
     height: 900px;
     align-items: center;
 }
-.ManageRealm .PlayArea div:first-child {
+.ManageRealm .PlayArea div:has(img) {
     width: 300px;
     padding: 10px;
 }
@@ -112,4 +112,45 @@
     background-color: var(--panel-bg);
     margin: 20px;
     border-radius: 20px;
+}
+.ManageRealm .None {
+    background-color: var(--panel-bg);
+    width: 100%;
+    padding: 10px;
+}
+.ManageRealm .New {
+    display: flex;
+    margin: auto;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 8px;
+    height: 70px;
+    justify-content: center;
+    align-items: center;
+
+    background: var(--btn-bg);
+    border: 2px solid rgba(0, 0, 0, 0.25);
+
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s ease;
+}
+.ManageRealm .New:hover {
+    background: var(--btn-bg-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+}
+.ManageRealm .New:active {
+    transform: translateY(1px);
+}
+.ManageRealm .Info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.ManageRealm .Name {
+    font-size: 18px;
+    font-weight: bold;
+    color: rgb(var(--text-primary));
 }

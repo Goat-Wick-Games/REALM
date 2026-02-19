@@ -7,7 +7,9 @@
     padding: 2rem;
     border-radius: 12px;
     min-width: 400px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-self: center !important;
     font-weight: bold;
     font-size: 1.5rem;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
@@ -55,6 +57,9 @@
 .SettingsPopup .cancel-btn {
     background-color: var(--btn-bg);
     min-width: 150px;
+    width: 80%;
+    margin: auto;
+    margin-bottom: 0;
     color: rgb(var(--text-primary));
     border: none;
     padding: 0.7rem 1.5rem;

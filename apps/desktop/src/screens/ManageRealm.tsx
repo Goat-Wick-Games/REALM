@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import './ManageRealm.css';
 import type { Realm } from '@realm/core';
-import { SettingsStore } from '@realm/storage';
-import { useTheme } from '../theme/ThemeContext';
+import { useTheme } from '../context/ThemeContext';
 import RealmElement from '../components/RealmElement';
+import { useSettings } from '../context/SettingsContext';
 
 type ManageRealmProps = {
     onBack: () => void;
@@ -14,17 +14,10 @@ const ManageRealm: React.FC<ManageRealmProps> = (props) => {
     const { onBack, onEditMap } = props;
 
     const containerRef = useRef<HTMLElement | null>(null);
-    const [reducedMotion, setReducedMotion] = useState<boolean>(true);
     const [selectedRealm, setSelectedRealm] = useState<Realm | null>();
-    const settings = useRef(new SettingsStore('settings.json')).current;
+    const { settings } = useSettings();
+    const reducedMotion = settings.reducedMotion;
     const { theme } = useTheme();
-
-    useEffect(() => {
-        (async () => {
-            await settings.init();
-            setReducedMotion((await settings.get('reducedMotion')) || false);
-        })();
-    }, []);
 
     const handleMouseMove = (e: React.MouseEvent) => {
         if (reducedMotion) return;
@@ -56,25 +49,37 @@ const ManageRealm: React.FC<ManageRealmProps> = (props) => {
                     <div className="InnerArea">
                         <RealmElement
                             selectedRealm={(newRealm, realm) => {
-                                newRealm
-                                    ? setSelectedRealm(null)
-                                    : realm && setSelectedRealm(realm);
+                                newRealm ? onEditMap() : realm && setSelectedRealm(realm);
                             }}
                             realmList={[]}
                         />
                     </div>
                 </div>
                 <div className="PlayArea">
-                    <div className="Map">
-                        <h3>Map of the world (click to edit)</h3>
-                        <img src="" alt="" onClick={onEditMap} />
-                    </div>
-                    <div className="Players">
-                        <h3>{!selectedRealm ? 'New Realm' : selectedRealm.name}</h3>
-                    </div>
-                    <div className="Play">
-                        <button>Play</button>
-                    </div>
+                    {!selectedRealm ? (
+                        <div className="None">
+                            <h1>You don't have a realm yet</h1>
+                            <h2>Why don't you make one</h2>
+                            <button onClick={onEditMap} className="New">
+                                <div className="Info">
+                                    <span className="Name">Add new Realm</span>
+                                </div>
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="Map">
+                                <h3>Map of the world (click to edit)</h3>
+                                <img src="" alt="" onClick={onEditMap} />
+                            </div>
+                            <div className="Players">
+                                <h3>{!selectedRealm ? 'New Realm' : selectedRealm.name}</h3>
+                            </div>
+                            <div className="Play">
+                                <button>Play</button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
             <div className="MenuBackground">

@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import './MainMenu.css';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import SettingsPopup from '../components/SettingsPopup';
 import ExitPopup from '../components/ExitPopup';
-import { useTheme } from '../theme/ThemeContext';
-import { SettingsStore } from '@realm/storage';
+import { useTheme } from '../context/ThemeContext';
+import { useSettings } from '../context/SettingsContext';
 
 type menuTypes = 'host' | 'join' | 'settings' | 'exit' | '';
 
@@ -15,25 +15,11 @@ type MainMenuProps = {
 
 const MainMenu: React.FC<MainMenuProps> = (props) => {
     const containerRef = useRef<HTMLElement | null>(null);
-    const settings = useRef(new SettingsStore('settings.json')).current;
-    const [reducedMotion, setReducedMotion] = useState<boolean>(true);
+    const { settings } = useSettings();
+    const reducedMotion = settings.reducedMotion;
     const { onManageCharacter, onManageRealm } = props;
     const [openMenu, setOpenMenu] = useState<menuTypes>('');
     const { theme } = useTheme();
-
-    useEffect(() => {
-        (async () => {
-            await settings.init();
-            setReducedMotion((await settings.get('reducedMotion')) || false);
-        })();
-    }, []);
-
-    const refresh = () => {
-        (async () => {
-            await settings.init();
-            setReducedMotion((await settings.get('reducedMotion')) || false);
-        })();
-    };
 
     const open = (menu: menuTypes) => {
         openMenu === menu ? close() : setOpenMenu(menu);
@@ -147,9 +133,7 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
                 </>
             )}
 
-            {openMenu === 'settings' && (
-                <SettingsPopup closePopup={close} settingsChanged={refresh} />
-            )}
+            {openMenu === 'settings' && <SettingsPopup closePopup={close} />}
 
             {openMenu === 'exit' && <ExitPopup closePopup={close} exitApp={handleExit} />}
         </main>

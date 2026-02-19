@@ -1,9 +1,11 @@
 .GameScreen {
-    background: url('/bg/REALM-dark.svg') no-repeat center center;
-    background-size: cover;
     display: flex;
     width: 100vw;
     height: 100vh;
+}
+.GameScreen img {
+    z-index: 0;
+    pointer-events: none;
 }
 .GameScreen .UI {
     width: 100%;
@@ -30,6 +32,7 @@
     transform: scale(1.1);
 }
 .GameScreen .Canvas {
+    background: transparent;
     position: absolute;
     top: 0;
     left: 0;

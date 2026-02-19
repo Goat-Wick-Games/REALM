@@ -65,7 +65,7 @@ const RealmElement: React.FC<RealmElementProps> = (props) => {
                     </button>
                     {filteredRealms.map((realm) => (
                         <button
-                            onClick={() => selectedRealm(true, realm)}
+                            onClick={() => selectedRealm(false, realm)}
                             key={realm.id}
                             className="Slot"
                         >

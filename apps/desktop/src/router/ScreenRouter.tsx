@@ -1,36 +1,36 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Screen } from '../types/screen';
 import IntroSmash from '../screens/IntroSmash';
-import MainMenu from '../ui/MainMenu';
+import MainMenu from '../screens/MainMenu';
 import ManageCharacter from '../screens/ManageCharacter';
 import ManageRealm from '../screens/ManageRealm';
 import GameScreen from '../screens/GameScreen';
-import { SettingsStore } from '@realm/storage';
+import { useSettings } from '../context/SettingsContext';
 
 const ScreenRouter: React.FC = () => {
-    const settings = useRef(new SettingsStore('settings.json')).current;
-    const [screen, setScreen] = useState<Screen>('menu');
+    const { settings, loaded } = useSettings();
+    const [screen, setScreen] = useState<Screen>('game');
     const [showMainMenu, setShowMainMenu] = useState<boolean>();
     const [showIntro, setShowIntro] = useState<boolean>();
 
     useEffect(() => {
-        (async () => {
-            await settings.init();
-            const skipIntro: boolean | undefined = await settings.get('skipIntro');
-            if (skipIntro === undefined) return;
-            setShowIntro(!skipIntro);
-            setShowMainMenu(skipIntro);
-        })();
-    }, []);
+        if (!loaded) return;
+        const playIntro = !settings.skipIntro;
+        setShowIntro(playIntro);
+        setShowMainMenu(!playIntro);
+    }, [loaded]);
 
     const backToMainMenu = () => {
         setShowIntro(false);
         setShowMainMenu(true);
         setScreen('menu');
     };
+
     const editMap = () => {
         setScreen('game');
     };
+
+    if (!loaded) return null;
 
     switch (screen) {
         case 'menu':

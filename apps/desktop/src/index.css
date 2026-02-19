@@ -43,11 +43,11 @@ button:active {
 }
 /* ---------- DEFAULT (light) ---------- */
 :root {
-    --bg-color: 245, 245, 245;
-    --panel-bg: #1e1e1e;
     --text-primary: 20 20 20;
     --text-secondary: 230 230 230;
 
+    --bg-color: 245, 245, 245;
+    --panel-bg: #1e1e1e;
     --btn-bg: #dfdfdf;
     --btn-bg-hover: #cacaca;
 
@@ -56,11 +56,11 @@ button:active {
 
 /* ---------- DARK ---------- */
 :root[data-theme='dark'] {
-    --bg-color: 46, 46, 46;
-    --panel-bg: #ffffff;
     --text-primary: 230 230 230;
     --text-secondary: 20 20 20;
 
+    --bg-color: 46, 46, 46;
+    --panel-bg: #ffffff;
     --btn-bg: #4e4e4e;
     --btn-bg-hover: #2e2e2e;
 

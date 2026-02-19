@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { useTheme } from '../theme/ThemeContext';
+import { useTheme } from '../context/ThemeContext';
 import './ManageCharacter.css';
 import type { Character, Races, Classes } from '@realm/core';
 import { toast } from 'react-toastify';
 import basicData from '@realm/content';
 import CharacterSelect from '../components/CharacterSelect';
-import { SettingsStore } from '@realm/storage';
 import { CharacterStore } from '@realm/storage';
+import { useSettings } from '../context/SettingsContext';
 
 type ManageCharacterProps = {
     onBack: () => void;
@@ -20,8 +20,8 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
     const containerRef = useRef<HTMLElement | null>(null);
     const charactersStore = useRef(new CharacterStore()).current;
 
-    const [reducedMotion, setReducedMotion] = useState<boolean>(true);
-    const settings = useRef(new SettingsStore('settings.json')).current;
+    const { settings } = useSettings();
+    const reducedMotion = settings.reducedMotion;
     const { theme } = useTheme();
 
     const [showSelect, setShowSelect] = useState<boolean>(false);
@@ -50,13 +50,6 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
             setCharacterList(chars);
         };
         initStore();
-    }, []);
-
-    useEffect(() => {
-        (async () => {
-            await settings.init();
-            setReducedMotion((await settings.get('reducedMotion')) || false);
-        })();
     }, []);
 
     useEffect(() => {

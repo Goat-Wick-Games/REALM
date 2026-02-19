@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useTheme } from '../theme/ThemeContext';
+import { useTheme } from '../context/ThemeContext';
 import './IntroSmash.css';
 
 type IntroSmashProps = { onDone: () => void };

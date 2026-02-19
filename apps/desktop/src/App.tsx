@@ -1,7 +1,7 @@
 import { loadDisplay } from './Display';
 import ScreenRouter from './router/ScreenRouter';
 import { ToastContainer, Zoom } from 'react-toastify';
-import { useTheme } from './theme/ThemeContext';
+import { useTheme } from './context/ThemeContext';
 
 const App: React.FC = () => {
     const { theme } = useTheme();
