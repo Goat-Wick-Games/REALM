@@ -259,8 +259,6 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                 </h1>
             </div>
             <div className="MenuBackground">
-                <img src={`/bg/wall-${theme}.svg`} alt="MenuWall" className="bg layer-wall" />
-                <img src={`/bg/wall-${theme}-2.svg`} alt="MenuWall2" className="bg layer-wall-2" />
                 <img src={`/bg/floor-${theme}.svg`} alt="MenuFloor" className="bg layer-wall-2" />
                 <img src={`/bg/stand-${theme}.svg`} alt="MenuStand" className="bg layer-wall-2" />
                 <img

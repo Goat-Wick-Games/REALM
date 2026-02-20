@@ -11,6 +11,7 @@ const ScreenRouter: React.FC = () => {
     const { settings, loaded } = useSettings();
     const [screen, setScreen] = useState<Screen>('game');
     const [showMainMenu, setShowMainMenu] = useState<boolean>();
+    const [editMode, setEditMode] = useState<boolean>(false);
     const [showIntro, setShowIntro] = useState<boolean>();
 
     useEffect(() => {
@@ -28,6 +29,7 @@ const ScreenRouter: React.FC = () => {
     };
 
     const editMap = () => {
+        setEditMode(true);
         setScreen('game');
     };
 
@@ -58,7 +60,7 @@ const ScreenRouter: React.FC = () => {
         case 'manage realm':
             return <ManageRealm onBack={backToMainMenu} onEditMap={editMap} />;
         case 'game':
-            return <GameScreen onBack={backToMainMenu} />;
+            return <GameScreen onBack={backToMainMenu} editing={editMode} />;
         default:
             return null;
     }

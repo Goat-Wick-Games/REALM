@@ -1,7 +1,6 @@
-import { createContext, useEffect, type ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useSettings } from '../context/SettingsContext';
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+import { ThemeContext } from '../context/ThemeContext';
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { settings, updateSetting } = useSettings();

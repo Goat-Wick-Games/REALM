@@ -7,7 +7,7 @@ type SettingsContextType = {
     resetSettings: () => void;
 };
 
-const SettingsContext = createContext<SettingsContextType | null>(null);
+export const SettingsContext = createContext<SettingsContextType | null>(null);
 
 export const useSettings = () => {
     const context = useContext(SettingsContext);

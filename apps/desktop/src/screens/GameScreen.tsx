@@ -1,27 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Stage, Layer, Rect } from 'react-konva';
 import Konva from 'konva';
 import './GameScreen.css';
 import { useTheme } from '../context/ThemeContext';
 
-type GameScreenProps = { onBack: () => void };
+type GameScreenProps = { onBack: () => void; editing: boolean };
 
-const GRID_SIZE = 50;
+type Tile = { x: number; y: number; tileName: HTMLImageElement | null | undefined };
 
-const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
-    const [editMode, setEditMode] = useState(false);
+const GRID_SIZE = 100;
+
+const GameScreen: React.FC<GameScreenProps> = (props) => {
+    const { onBack, editing } = props;
+    const planks = useRef<HTMLImageElement>(null);
+    const [editMode, setEditMode] = useState(editing ?? false);
     const [layerOffset, setLayerOffset] = useState({ x: 0, y: 0 });
     const [scale, setScale] = useState(1);
     const [isPanning, setIsPanning] = useState(false);
     const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
     const { theme } = useTheme();
-
-    // Grid painting state
-    const [paintedCells, setPaintedCells] = useState<{ x: number; y: number; color: string }[]>([]);
-    const [, setHistory] = useState<{ x: number; y: number; color: string }[][]>([]);
-    const currentColor = 'black';
+    const [, setHistory] = useState<Tile[][]>([]);
     const [isPainting, setIsPainting] = useState(false);
     const [isErasing, setIsErasing] = useState(false);
+    const [image, setImage] = useState<HTMLImageElement | null>();
+    const [paintedCells, setPaintedCells] = useState<Tile[]>([]);
 
     useEffect(() => {
         const prevent = (e: MouseEvent) => e.preventDefault();
@@ -109,10 +111,12 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
         const gridX = Math.floor(localX / GRID_SIZE) * GRID_SIZE;
         const gridY = Math.floor(localY / GRID_SIZE) * GRID_SIZE;
 
-        const exists = paintedCells.some((c) => c.x === gridX && c.y === gridY);
+        const exists = paintedCells.some(
+            (c) => c.x === gridX && c.y === gridY && c.tileName === image,
+        );
         if (!exists) {
             pushHistory(); // ✅ save state before change
-            setPaintedCells((prev) => [...prev, { x: gridX, y: gridY, color: currentColor }]);
+            setPaintedCells((prev) => [...prev, { x: gridX, y: gridY, tileName: image }]);
         }
     };
 
@@ -177,6 +181,41 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
                         </div>
                     </div>
                 </aside>
+                <aside className="Tools Sidebar">
+                    <div className="Title">
+                        {editMode ? (
+                            <div className="Tiles">
+                                <h2>Tiles</h2>
+                                <div className="Floor">
+                                    <h3>Floor</h3>
+                                    <section>
+                                        <div
+                                            className="Planks"
+                                            onClick={() => setImage(planks.current)}
+                                        >
+                                            <img
+                                                ref={planks}
+                                                src={`/tiles/floor/${theme}/plank.svg`}
+                                                alt="Planks"
+                                            />
+                                        </div>
+                                    </section>
+                                </div>
+                                <div className="Walls">
+                                    <h3>Walls</h3>
+                                </div>
+                                <div className="Decor">
+                                    <h3>Decor</h3>
+                                </div>
+                                <div className="Triggers">
+                                    <h3>Triggers</h3>
+                                </div>
+                            </div>
+                        ) : (
+                            <>Effects</>
+                        )}
+                    </div>
+                </aside>
             </div>
 
             <Stage
@@ -195,11 +234,11 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
                     {paintedCells.map((cell, i) => (
                         <Rect
                             key={i}
-                            x={cell.x}
-                            y={cell.y}
-                            width={GRID_SIZE}
-                            height={GRID_SIZE}
-                            fill={cell.color}
+                            x={cell.x - 1}
+                            y={cell.y - 1}
+                            width={GRID_SIZE + 2}
+                            height={GRID_SIZE + 2}
+                            fillPatternImage={cell.tileName ?? undefined}
                         />
                     ))}
                 </Layer>

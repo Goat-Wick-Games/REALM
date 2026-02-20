@@ -1,5 +1,6 @@
-import { createContext, useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { SettingsStore } from '@realm/storage';
+import { SettingsContext } from '../context/SettingsContext';
 
 const defaultSettings: Settings = {
     fastInteraction: false,
@@ -16,16 +17,6 @@ const defaultSettings: Settings = {
     showFps: false,
     theme: 'system',
 };
-
-type SettingsContextType = {
-    settings: Settings;
-    loaded: boolean;
-    updateSetting: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
-    resetSettings: () => void;
-};
-
-const SettingsContext = createContext<SettingsContextType | null>(null);
-
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     const [loaded, setLoaded] = useState(false);
     const [settings, setSettings] = useState<Settings>(defaultSettings);
