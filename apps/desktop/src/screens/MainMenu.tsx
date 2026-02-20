@@ -22,7 +22,8 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
     const { theme } = useTheme();
 
     const open = (menu: menuTypes) => {
-        openMenu === menu ? close() : setOpenMenu(menu);
+        if (openMenu === menu) close();
+        else setOpenMenu(menu);
     };
     const close = () => setOpenMenu('');
 

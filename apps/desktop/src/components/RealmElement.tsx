@@ -13,10 +13,7 @@ const RealmElement: React.FC<RealmElementProps> = (props) => {
     const [filteredRealms, setFilteredRealms] = useState<Realm[]>([]);
 
     useEffect(() => {
-        if (!realmList) {
-            setFilteredRealms([]); // safety
-            return;
-        }
+        if (!realmList) return;
 
         realmList.sort(
             (a, b) => new Date(a.lastPlayed).getTime() - new Date(b.lastPlayed).getTime(),

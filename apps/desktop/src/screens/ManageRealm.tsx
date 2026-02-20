@@ -49,7 +49,11 @@ const ManageRealm: React.FC<ManageRealmProps> = (props) => {
                     <div className="InnerArea">
                         <RealmElement
                             selectedRealm={(newRealm, realm) => {
-                                newRealm ? onEditMap() : realm && setSelectedRealm(realm);
+                                if (newRealm) {
+                                    onEditMap();
+                                } else if (realm) {
+                                    setSelectedRealm(realm);
+                                }
                             }}
                             realmList={[]}
                         />

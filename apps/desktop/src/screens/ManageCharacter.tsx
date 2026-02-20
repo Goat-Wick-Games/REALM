@@ -16,7 +16,8 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
     const { onBack } = props;
 
     const bobFrame = useRef<number>(0);
-    const bobStart = useRef<number>(performance.now());
+    const bobStart = useRef<number>(0);
+
     const containerRef = useRef<HTMLElement | null>(null);
     const charactersStore = useRef(new CharacterStore()).current;
 
@@ -44,13 +45,17 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
     });
 
     useEffect(() => {
+        bobStart.current = performance.now();
+    });
+
+    useEffect(() => {
         const initStore = async () => {
             await charactersStore.init();
             const chars = await charactersStore.getAll();
             setCharacterList(chars);
         };
         initStore();
-    }, []);
+    });
 
     useEffect(() => {
         if (!character) return;
@@ -393,7 +398,13 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
                 <CharacterSelect
                     characterList={characterList}
                     closePopup={(character, exit) => {
-                        !character ? !exit && clearSheet() : setCharacter(character);
+                        if (!character) {
+                            if (!exit) {
+                                clearSheet();
+                            }
+                        } else {
+                            setCharacter(character);
+                        }
                         setShowSelect(false);
                     }}
                     deleteCharacter={deleteCharacter}

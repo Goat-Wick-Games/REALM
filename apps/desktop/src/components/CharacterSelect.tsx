@@ -24,10 +24,7 @@ const CharacterSelect: React.FC<CharacterSelectProps> = (props) => {
             await charactersStore.init();
         };
         initStore();
-        if (!characterList) {
-            setFilteredCharacters([]); // safety
-            return;
-        }
+        if (!characterList) return;
 
         characterList.sort(
             (a, b) => new Date(b.lastPlayed).getTime() - new Date(a.lastPlayed).getTime(),

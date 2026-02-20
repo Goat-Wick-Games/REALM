@@ -21,38 +21,41 @@ const IntroSmash: React.FC<IntroSmashProps> = ({ onDone }) => {
     const [covered, setCovered] = useState(true);
     const { theme } = useTheme();
 
-    useEffect(() => {
-        if (!theme) return; // wait for context
+    const makeShard = (points: [number, number][]): Shard => {
+        // Find bounding box
+        const xs = points.map((p) => p[0]);
+        const ys = points.map((p) => p[1]);
+        const minX = Math.min(...xs);
+        const minY = Math.min(...ys);
+        const maxX = Math.max(...xs);
+        const maxY = Math.max(...ys);
+        const w = maxX - minX;
+        const h = maxY - minY;
 
-        const canvas = canvasRef.current!;
-        const ctx = canvas.getContext('2d')!;
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        // Offscreen canvas
+        const c = document.createElement('canvas');
+        c.width = w;
+        c.height = h;
+        const ctx = c.getContext('2d')!;
+        ctx.fillStyle = theme === 'light' ? '#ffffff' : '#1e1e1e';
+        ctx.beginPath();
+        ctx.moveTo(points[0][0] - minX, points[0][1] - minY);
+        for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i][0] - minX, points[i][1] - minY);
+        }
+        ctx.closePath();
+        ctx.fill();
 
-        shardsRef.current = createShards(canvas, 12, 10);
-
-        const animate = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            shardsRef.current.forEach((s) => {
-                if (clickedRef.current) {
-                    s.vy += 0.3; // gravity
-                    s.x += s.vx;
-                    s.y += s.vy;
-                    s.angle += s.va;
-                }
-                ctx.save();
-                ctx.translate(s.x, s.y);
-                ctx.rotate(s.angle);
-                ctx.drawImage(s.img, 0, 0);
-                ctx.restore();
-            });
-
-            requestAnimationFrame(animate);
+        return {
+            img: c,
+            x: minX,
+            y: minY,
+            vx: 0,
+            vy: 0,
+            angle: 0,
+            va: 0,
         };
-
-        animate();
-    }, [theme]);
+    };
 
     const createShards = (canvas: HTMLCanvasElement, cols: number, rows: number) => {
         const shards: Shard[] = [];
@@ -108,41 +111,42 @@ const IntroSmash: React.FC<IntroSmashProps> = ({ onDone }) => {
         return shards;
     };
 
-    const makeShard = (points: [number, number][]): Shard => {
-        // Find bounding box
-        const xs = points.map((p) => p[0]);
-        const ys = points.map((p) => p[1]);
-        const minX = Math.min(...xs);
-        const minY = Math.min(...ys);
-        const maxX = Math.max(...xs);
-        const maxY = Math.max(...ys);
-        const w = maxX - minX;
-        const h = maxY - minY;
+    useEffect(() => {
+        if (!theme) return; // wait for context
 
-        // Offscreen canvas
-        const c = document.createElement('canvas');
-        c.width = w;
-        c.height = h;
-        const ctx = c.getContext('2d')!;
-        ctx.fillStyle = theme === 'light' ? '#ffffff' : '#1e1e1e';
-        ctx.beginPath();
-        ctx.moveTo(points[0][0] - minX, points[0][1] - minY);
-        for (let i = 1; i < points.length; i++) {
-            ctx.lineTo(points[i][0] - minX, points[i][1] - minY);
+        const canvas = canvasRef.current!;
+        const cols = 20;
+        const rows = 20;
+        const ctx = canvas.getContext('2d')!;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        if (!shardsRef.current && canvas) {
+            shardsRef.current = createShards(canvas, cols, rows);
         }
-        ctx.closePath();
-        ctx.fill();
 
-        return {
-            img: c,
-            x: minX,
-            y: minY,
-            vx: 0,
-            vy: 0,
-            angle: 0,
-            va: 0,
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            shardsRef.current.forEach((s) => {
+                if (clickedRef.current) {
+                    s.vy += 0.3; // gravity
+                    s.x += s.vx;
+                    s.y += s.vy;
+                    s.angle += s.va;
+                }
+                ctx.save();
+                ctx.translate(s.x, s.y);
+                ctx.rotate(s.angle);
+                ctx.drawImage(s.img, 0, 0);
+                ctx.restore();
+            });
+
+            requestAnimationFrame(animate);
         };
-    };
+
+        animate();
+    }, [theme]);
 
     useEffect(() => {
         const canvas = canvasRef.current!;

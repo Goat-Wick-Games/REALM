@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Stage, Layer, Rect } from 'react-konva';
+import Konva from 'konva';
 import './GameScreen.css';
 import { useTheme } from '../context/ThemeContext';
 
@@ -17,7 +18,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
 
     // Grid painting state
     const [paintedCells, setPaintedCells] = useState<{ x: number; y: number; color: string }[]>([]);
-    const [_, setHistory] = useState<{ x: number; y: number; color: string }[][]>([]);
+    const [, setHistory] = useState<{ x: number; y: number; color: string }[][]>([]);
     const currentColor = 'black';
     const [isPainting, setIsPainting] = useState(false);
     const [isErasing, setIsErasing] = useState(false);
@@ -47,8 +48,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
     }, []);
 
     // Camera panning with middle mouse
-    const handleMouseDown = (e: any) => {
+    const handleMouseDown = (e: Konva.KonvaEventObject<WheelEvent>) => {
         const stage = e.target.getStage();
+        if (!stage) return;
         const pointer = stage.getPointerPosition()!;
 
         // middle mouse = pan
@@ -79,8 +81,9 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
         setIsPainting(false);
     };
 
-    const handleMouseMove = (e: any) => {
+    const handleMouseMove = (e: Konva.KonvaEventObject<WheelEvent>) => {
         const stage = e.target.getStage();
+        if (!stage) return;
         const pointer = stage.getPointerPosition()!;
         if (isPanning) {
             const dx = pointer.x - lastPos.x;
@@ -129,7 +132,7 @@ const GameScreen: React.FC<GameScreenProps> = ({ onBack }) => {
     };
 
     // Optional zoom
-    const handleWheel = (e: any) => {
+    const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
         e.evt.preventDefault();
         const stage = e.target.getStage();
         if (!stage) return;

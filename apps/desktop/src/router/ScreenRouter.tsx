@@ -15,6 +15,7 @@ const ScreenRouter: React.FC = () => {
 
     useEffect(() => {
         if (!loaded) return;
+        if (settings.skipIntro === undefined) return;
         const playIntro = !settings.skipIntro;
         setShowIntro(playIntro);
         setShowMainMenu(!playIntro);

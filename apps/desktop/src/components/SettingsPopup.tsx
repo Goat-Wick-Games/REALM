@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import './SettingsPopup.css';
-import { useTheme, type Theme } from '../context/ThemeContext';
+import { useTheme } from '../context/ThemeContext';
 import { type Display, setDisplay } from '../Display';
-import { useSettings, type QualityLevels } from '../context/SettingsContext';
+import { useSettings } from '../context/SettingsContext';
 
 type SettingsPopupProps = {
     closePopup: () => void;
