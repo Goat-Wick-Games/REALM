@@ -3,27 +3,59 @@ import { Stage, Layer, Rect } from 'react-konva';
 import Konva from 'konva';
 import './GameScreen.css';
 import { useTheme } from '../context/ThemeContext';
+import MapCreatorPopup from '../components/MapCreatorPopup';
 
 type GameScreenProps = { onBack: () => void; editing: boolean };
 
 type Tile = { x: number; y: number; tileName: HTMLImageElement | null | undefined };
 
+type Map = {
+    id: number;
+    tiles: Tile[];
+    name: string;
+};
+
+type Coords = { x: number; y: number };
+
+type HistoryState = Tile[];
+
 const GRID_SIZE = 100;
 
 const GameScreen: React.FC<GameScreenProps> = (props) => {
     const { onBack, editing } = props;
-    const planks = useRef<HTMLImageElement>(null);
-    const [editMode, setEditMode] = useState(editing ?? false);
-    const [layerOffset, setLayerOffset] = useState({ x: 0, y: 0 });
-    const [scale, setScale] = useState(1);
-    const [isPanning, setIsPanning] = useState(false);
-    const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
     const { theme } = useTheme();
-    const [, setHistory] = useState<Tile[][]>([]);
-    const [isPainting, setIsPainting] = useState(false);
-    const [isErasing, setIsErasing] = useState(false);
+    const planks = useRef<HTMLImageElement>(null);
+    const grass = useRef<HTMLImageElement>(null);
+
+    const [maps, setMaps] = useState<Map[]>([]);
+    const [selectedMap, setSelectedMap] = useState<Map>();
+    const [editMode, setEditMode] = useState(editing ?? false);
+    const [layerOffset, setLayerOffset] = useState<Coords>({ x: 0, y: 0 });
+    const [scale, setScale] = useState(1);
+    const [isPanning, setIsPanning] = useState<boolean>(false);
+    const [mapCreatorPopup, setMapCreatorPopup] = useState<boolean>(false);
+    const [lastPos, setLastPos] = useState<Coords>({ x: 0, y: 0 });
+    const [undoStack, setUndoStack] = useState<HistoryState[]>([]);
+    const [, setRedoStack] = useState<HistoryState[]>([]);
+    const [isPainting, setIsPainting] = useState<boolean>(false);
+    const [isErasing, setIsErasing] = useState<boolean>(false);
     const [image, setImage] = useState<HTMLImageElement | null>();
     const [paintedCells, setPaintedCells] = useState<Tile[]>([]);
+
+    const paintedCellsRef = useRef(paintedCells);
+    const undoRef = useRef<HistoryState[]>(undoStack);
+    const redoRef = useRef<HistoryState[]>([]);
+
+    useEffect(() => {
+        paintedCellsRef.current = paintedCells;
+        setMaps((prev) =>
+            prev.map((map) => (map.id === selectedMap?.id ? { ...map, tiles: paintedCells } : map)),
+        );
+    }, [paintedCells]);
+
+    useEffect(() => {
+        undoRef.current = undoStack;
+    }, [undoStack]);
 
     useEffect(() => {
         const prevent = (e: MouseEvent) => e.preventDefault();
@@ -32,22 +64,61 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
     }, []);
 
     useEffect(() => {
-        const handleUndo = (e: KeyboardEvent) => {
-            if (e.ctrlKey && e.key.toLowerCase() === 'z') {
-                setHistory((prev) => {
-                    if (prev.length === 0) return prev;
+        const handleKeys = (e: KeyboardEvent) => {
+            if (!e.ctrlKey) return;
 
-                    const copy = [...prev];
-                    const last = copy.pop()!;
-                    setPaintedCells(last);
-                    return copy;
-                });
+            const key = e.key.toLowerCase();
+
+            if (key === 'z') {
+                e.preventDefault();
+                undo();
+            }
+
+            if (key === 'y') {
+                e.preventDefault();
+                redo();
             }
         };
 
-        window.addEventListener('keydown', handleUndo);
-        return () => window.removeEventListener('keydown', handleUndo);
-    }, []);
+        window.addEventListener('keydown', handleKeys);
+        return () => window.removeEventListener('keydown', handleKeys);
+    });
+
+    const undo = () => {
+        const undoStack = undoRef.current;
+        if (undoStack.length === 0) return;
+
+        const current = paintedCellsRef.current;
+        const previous = undoStack[undoStack.length - 1];
+
+        const newUndo = undoStack.slice(0, -1);
+        const newRedo = [...redoRef.current, [...current]];
+
+        undoRef.current = newUndo;
+        redoRef.current = newRedo;
+
+        setUndoStack(newUndo);
+        setRedoStack(newRedo);
+        setPaintedCells(previous);
+    };
+
+    const redo = () => {
+        const redoStack = redoRef.current;
+        if (redoStack.length === 0) return;
+
+        const current = paintedCellsRef.current;
+        const next = redoStack[redoStack.length - 1];
+
+        const newRedo = redoStack.slice(0, -1);
+        const newUndo = [...undoRef.current, [...current]];
+
+        undoRef.current = newUndo;
+        redoRef.current = newRedo;
+
+        setUndoStack(newUndo);
+        setRedoStack(newRedo);
+        setPaintedCells(next);
+    };
 
     // Camera panning with middle mouse
     const handleMouseDown = (e: Konva.KonvaEventObject<WheelEvent>) => {
@@ -66,12 +137,14 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
 
         // LEFT CLICK → paint
         if (e.evt.button === 0) {
+            pushHistory();
             setIsPainting(true);
             paintCell(pointer.x, pointer.y);
         }
 
         // RIGHT CLICK → erase
         if (e.evt.button === 2) {
+            pushHistory();
             setIsErasing(true);
             eraseCell(pointer.x, pointer.y);
         }
@@ -84,6 +157,7 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
     };
 
     const handleMouseMove = (e: Konva.KonvaEventObject<WheelEvent>) => {
+        if (!isErasing && !isPanning && !isPainting) return;
         const stage = e.target.getStage();
         if (!stage) return;
         const pointer = stage.getPointerPosition()!;
@@ -100,7 +174,16 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
     };
 
     const pushHistory = () => {
-        setHistory((prev) => [...prev, paintedCells]);
+        const current = paintedCellsRef.current;
+
+        setUndoStack((prev) => [...prev, [...current]]);
+        redoRef.current = [];
+        setRedoStack([]);
+    };
+
+    const handleMapCreated = (mapName: string) => {
+        const newMap: Map = { id: Date.now(), name: mapName, tiles: [] };
+        setMaps((prev) => [...prev, newMap]);
     };
 
     // Paint a cell at the pointer position (snapped to grid)
@@ -115,8 +198,18 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
             (c) => c.x === gridX && c.y === gridY && c.tileName === image,
         );
         if (!exists) {
-            pushHistory(); // ✅ save state before change
-            setPaintedCells((prev) => [...prev, { x: gridX, y: gridY, tileName: image }]);
+            const taken = paintedCells.some((c) => c.x === gridX && c.y === gridY);
+            if (!taken) {
+                setPaintedCells((prev) => [...prev, { x: gridX, y: gridY, tileName: image }]);
+            } else {
+                setPaintedCells((prev) =>
+                    prev.map((c) =>
+                        c.x === gridX && c.y === gridY
+                            ? { x: gridX, y: gridY, tileName: image }
+                            : c,
+                    ),
+                );
+            }
         }
     };
 
@@ -129,8 +222,6 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
 
         const exists = paintedCells.some((c) => c.x === gridX && c.y === gridY);
         if (!exists) return;
-
-        pushHistory(); // ✅ undo support
 
         setPaintedCells((prev) => prev.filter((c) => !(c.x === gridX && c.y === gridY)));
     };
@@ -155,6 +246,12 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
 
     return (
         <main className={`GameScreen`}>
+            {mapCreatorPopup && (
+                <MapCreatorPopup
+                    closePopup={() => setMapCreatorPopup(false)}
+                    mapCreated={handleMapCreated}
+                />
+            )}
             <img src={`/bg/REALM-${theme}.svg`} alt="Background" />
             <div className="UI">
                 <button className="BackBtn" onClick={onBack}>
@@ -164,6 +261,7 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
                     <div className="Title">
                         <div className="checkbox-wrapper-8">
                             <input
+                                disabled={maps.length === 0}
                                 checked={editMode}
                                 onChange={(e) => setEditMode(e.target.checked)}
                                 className="tgl tgl-skewed"
@@ -180,6 +278,26 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
                             </label>
                         </div>
                     </div>
+                    <div className="MapList">
+                        <h2>Maps</h2>
+                        <button onClick={() => setMapCreatorPopup(true)}>+</button>
+                        {maps.length === 0 ? (
+                            <p>No maps yet</p>
+                        ) : (
+                            maps.map((map, i) => (
+                                <div
+                                    key={i}
+                                    className="Map"
+                                    onClick={() => {
+                                        setSelectedMap(map);
+                                        setPaintedCells([]);
+                                    }}
+                                >
+                                    {map.name}
+                                </div>
+                            ))
+                        )}
+                    </div>
                 </aside>
                 <aside className="Tools Sidebar">
                     <div className="Title">
@@ -190,13 +308,23 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
                                     <h3>Floor</h3>
                                     <section>
                                         <div
-                                            className="Planks"
+                                            className={`Planks ${image === planks.current ? 'Selected' : ''}`}
                                             onClick={() => setImage(planks.current)}
                                         >
                                             <img
                                                 ref={planks}
                                                 src={`/tiles/floor/${theme}/plank.svg`}
                                                 alt="Planks"
+                                            />
+                                        </div>
+                                        <div
+                                            className={`Grass ${image === grass.current ? 'Selected' : ''}`}
+                                            onClick={() => setImage(grass.current)}
+                                        >
+                                            <img
+                                                ref={grass}
+                                                src={`/tiles/floor/${theme}/grass.svg`}
+                                                alt="Grass"
                                             />
                                         </div>
                                     </section>
@@ -222,7 +350,15 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
                 width={window.innerWidth}
                 height={window.innerHeight}
                 className="Canvas"
-                style={{ cursor: editMode ? 'crosshair' : 'default' }}
+                style={{
+                    cursor: isPanning
+                        ? 'grabbing'
+                        : editMode
+                          ? isErasing
+                              ? 'crosshair'
+                              : 'cell'
+                          : 'default',
+                }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
@@ -231,7 +367,7 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
                 {/* Objects & grid Layer */}
                 <Layer x={layerOffset.x} y={layerOffset.y} scaleX={scale} scaleY={scale}>
                     {/* Painted cells */}
-                    {paintedCells.map((cell, i) => (
+                    {selectedMap?.tiles.map((cell, i) => (
                         <Rect
                             key={i}
                             x={cell.x - 1}

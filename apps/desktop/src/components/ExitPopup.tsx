@@ -1,4 +1,5 @@
 import './ExitPopup.css';
+
 type ExitPopupProps = {
     closePopup: () => void;
     exitApp: () => void;
