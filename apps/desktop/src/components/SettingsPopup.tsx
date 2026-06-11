@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './SettingsPopup.css';
 import { useTheme } from '../context/ThemeContext';
-import { type Display, setDisplay } from '../Display';
+import { type Display, setDisplay } from '../display';
 import { useSettings } from '../context/SettingsContext';
 
 type SettingsPopupProps = {

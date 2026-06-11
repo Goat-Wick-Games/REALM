@@ -3,8 +3,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(255, 255, 255, 0.9);
-    border: 2px solid #333;
+    background-color: var(--overlay);
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     padding: 20px;
     z-index: 10;
@@ -12,7 +12,7 @@
 
 .MapCreatorPopup h2 {
     margin-top: 0;
-    color: #333;
+    color: rgb(var(--text-primary));
     font-size: 1.5em;
 }
 
@@ -20,7 +20,7 @@
     width: 100%;
     padding: 10px;
     margin: 15px 0;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 1em;
     box-sizing: border-box;
@@ -29,7 +29,7 @@
 .popup-buttons {
     display: flex;
     gap: 10px;
-    justify-content: flex-end;
+    justify-content: space-between;
 }
 
 .confirm-btn,

@@ -4,22 +4,26 @@ import Konva from 'konva';
 import './GameScreen.css';
 import { useTheme } from '../context/ThemeContext';
 import MapCreatorPopup from '../components/MapCreatorPopup';
+import { toast } from 'react-toastify';
+import type { Coords, HistoryState, Map, Tile } from '@realm/board';
+import {
+    GRID_SIZE,
+    addMap,
+    createTutorialMap,
+    eraseCell as eraseCellUtil,
+    getGridPosition,
+    getRedoState,
+    getTileAtGrid,
+    getUndoState,
+    paintCell as paintCellUtil,
+    mapExists,
+    panLayer,
+    pushHistoryState,
+    updateSelectedMapTiles,
+    zoomAt,
+} from '@realm/board';
 
 type GameScreenProps = { onBack: () => void; editing: boolean };
-
-type Tile = { x: number; y: number; tileName: HTMLImageElement | null | undefined };
-
-type Map = {
-    id: number;
-    tiles: Tile[];
-    name: string;
-};
-
-type Coords = { x: number; y: number };
-
-type HistoryState = Tile[];
-
-const GRID_SIZE = 100;
 
 const GameScreen: React.FC<GameScreenProps> = (props) => {
     const { onBack, editing } = props;
@@ -27,8 +31,9 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
     const planks = useRef<HTMLImageElement>(null);
     const grass = useRef<HTMLImageElement>(null);
 
-    const [maps, setMaps] = useState<Map[]>([]);
-    const [selectedMap, setSelectedMap] = useState<Map>();
+    const tutorialMap = React.useMemo(() => createTutorialMap(theme), [theme]);
+    const [maps, setMaps] = useState<Map[]>([tutorialMap]);
+    const [selectedMap, setSelectedMap] = useState<Map>(tutorialMap);
     const [editMode, setEditMode] = useState(editing ?? false);
     const [layerOffset, setLayerOffset] = useState<Coords>({ x: 0, y: 0 });
     const [scale, setScale] = useState(1);
@@ -36,26 +41,52 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
     const [mapCreatorPopup, setMapCreatorPopup] = useState<boolean>(false);
     const [lastPos, setLastPos] = useState<Coords>({ x: 0, y: 0 });
     const [undoStack, setUndoStack] = useState<HistoryState[]>([]);
-    const [, setRedoStack] = useState<HistoryState[]>([]);
+    const [redoStack, setRedoStack] = useState<HistoryState[]>([]);
+    const [mapHistory, setMapHistory] = useState<
+        Record<string, { undo: HistoryState[]; redo: HistoryState[] }>
+    >({});
     const [isPainting, setIsPainting] = useState<boolean>(false);
     const [isErasing, setIsErasing] = useState<boolean>(false);
+    const [isCtrlPressed, setIsCtrlPressed] = useState<boolean>(false);
     const [image, setImage] = useState<HTMLImageElement | null>();
-    const [paintedCells, setPaintedCells] = useState<Tile[]>([]);
+    const [paintedCells, setPaintedCells] = useState<Tile[]>(tutorialMap.tiles);
 
-    const paintedCellsRef = useRef(paintedCells);
+    const paintedCellsRef = useRef<Tile[]>(paintedCells);
     const undoRef = useRef<HistoryState[]>(undoStack);
-    const redoRef = useRef<HistoryState[]>([]);
+    const redoRef = useRef<HistoryState[]>(redoStack);
 
     useEffect(() => {
-        paintedCellsRef.current = paintedCells;
-        setMaps((prev) =>
-            prev.map((map) => (map.id === selectedMap?.id ? { ...map, tiles: paintedCells } : map)),
-        );
-    }, [paintedCells]);
+        if (!selectedMap) return;
+
+        setMaps((prev) => updateSelectedMapTiles(prev, selectedMap.name, paintedCells));
+        setSelectedMap((prev) => (prev ? { ...prev, tiles: paintedCells } : prev));
+    }, [paintedCells, selectedMap?.name]);
+
+    const saveCurrentMapHistory = () => {
+        if (!selectedMap) return;
+        setMapHistory((prev) => ({
+            ...prev,
+            [selectedMap.name]: { undo: undoStack, redo: redoStack },
+        }));
+    };
+
+    const loadMapHistory = (mapName: string) => {
+        const history = mapHistory[mapName] ?? { undo: [], redo: [] };
+        setUndoStack(history.undo);
+        setRedoStack(history.redo);
+    };
 
     useEffect(() => {
         undoRef.current = undoStack;
     }, [undoStack]);
+
+    useEffect(() => {
+        redoRef.current = redoStack;
+    }, [redoStack]);
+
+    useEffect(() => {
+        paintedCellsRef.current = paintedCells;
+    }, [paintedCells]);
 
     useEffect(() => {
         const prevent = (e: MouseEvent) => e.preventDefault();
@@ -64,7 +95,9 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
     }, []);
 
     useEffect(() => {
-        const handleKeys = (e: KeyboardEvent) => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            setIsCtrlPressed(e.ctrlKey);
+
             if (!e.ctrlKey) return;
 
             const key = e.key.toLowerCase();
@@ -80,44 +113,42 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
             }
         };
 
-        window.addEventListener('keydown', handleKeys);
-        return () => window.removeEventListener('keydown', handleKeys);
-    });
+        const handleKeyUp = (e: KeyboardEvent) => {
+            if (!e.ctrlKey) {
+                setIsCtrlPressed(false);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+        };
+    }, []);
 
     const undo = () => {
-        const undoStack = undoRef.current;
-        if (undoStack.length === 0) return;
+        const state = getUndoState(undoRef.current, paintedCellsRef.current, redoRef.current);
+        if (!state) return;
 
-        const current = paintedCellsRef.current;
-        const previous = undoStack[undoStack.length - 1];
+        undoRef.current = state.newUndo;
+        redoRef.current = state.newRedo;
 
-        const newUndo = undoStack.slice(0, -1);
-        const newRedo = [...redoRef.current, [...current]];
-
-        undoRef.current = newUndo;
-        redoRef.current = newRedo;
-
-        setUndoStack(newUndo);
-        setRedoStack(newRedo);
-        setPaintedCells(previous);
+        setUndoStack(state.newUndo);
+        setRedoStack(state.newRedo);
+        setPaintedCells(state.previous);
     };
 
     const redo = () => {
-        const redoStack = redoRef.current;
-        if (redoStack.length === 0) return;
+        const state = getRedoState(redoRef.current, paintedCellsRef.current, undoRef.current);
+        if (!state) return;
 
-        const current = paintedCellsRef.current;
-        const next = redoStack[redoStack.length - 1];
+        undoRef.current = state.newUndo;
+        redoRef.current = state.newRedo;
 
-        const newRedo = redoStack.slice(0, -1);
-        const newUndo = [...undoRef.current, [...current]];
-
-        undoRef.current = newUndo;
-        redoRef.current = newRedo;
-
-        setUndoStack(newUndo);
-        setRedoStack(newRedo);
-        setPaintedCells(next);
+        setUndoStack(state.newUndo);
+        setRedoStack(state.newRedo);
+        setPaintedCells(state.previous);
     };
 
     // Camera panning with middle mouse
@@ -134,6 +165,21 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
         }
 
         if (!editMode) return;
+
+        // CTRL+LEFT CLICK → copy tile under cursor
+        if (e.evt.button === 0 && e.evt.ctrlKey) {
+            const { x: gridX, y: gridY } = getGridPosition(
+                pointer.x,
+                pointer.y,
+                layerOffset,
+                scale,
+            );
+            const tile = getTileAtGrid(paintedCells, gridX, gridY);
+            if (tile?.tileName) {
+                setImage(tile.tileName);
+            }
+            return;
+        }
 
         // LEFT CLICK → paint
         if (e.evt.button === 0) {
@@ -162,9 +208,7 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
         if (!stage) return;
         const pointer = stage.getPointerPosition()!;
         if (isPanning) {
-            const dx = pointer.x - lastPos.x;
-            const dy = pointer.y - lastPos.y;
-            setLayerOffset((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+            setLayerOffset((prev) => panLayer(prev, lastPos, { x: pointer.x, y: pointer.y }));
             setLastPos({ x: pointer.x, y: pointer.y });
         } else if (isPainting) {
             paintCell(pointer.x, pointer.y);
@@ -176,54 +220,28 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
     const pushHistory = () => {
         const current = paintedCellsRef.current;
 
-        setUndoStack((prev) => [...prev, [...current]]);
-        redoRef.current = [];
+        setUndoStack((prev) => pushHistoryState(prev, current));
         setRedoStack([]);
     };
 
     const handleMapCreated = (mapName: string) => {
-        const newMap: Map = { id: Date.now(), name: mapName, tiles: [] };
-        setMaps((prev) => [...prev, newMap]);
+        if (mapExists(maps, mapName)) {
+            toast.error('A map with that name already exists.');
+            return;
+        }
+
+        setMaps((prev) => addMap(prev, mapName));
     };
 
     // Paint a cell at the pointer position (snapped to grid)
     const paintCell = (x: number, y: number) => {
-        const localX = (x - layerOffset.x) / scale;
-        const localY = (y - layerOffset.y) / scale;
-
-        const gridX = Math.floor(localX / GRID_SIZE) * GRID_SIZE;
-        const gridY = Math.floor(localY / GRID_SIZE) * GRID_SIZE;
-
-        const exists = paintedCells.some(
-            (c) => c.x === gridX && c.y === gridY && c.tileName === image,
-        );
-        if (!exists) {
-            const taken = paintedCells.some((c) => c.x === gridX && c.y === gridY);
-            if (!taken) {
-                setPaintedCells((prev) => [...prev, { x: gridX, y: gridY, tileName: image }]);
-            } else {
-                setPaintedCells((prev) =>
-                    prev.map((c) =>
-                        c.x === gridX && c.y === gridY
-                            ? { x: gridX, y: gridY, tileName: image }
-                            : c,
-                    ),
-                );
-            }
-        }
+        const { x: gridX, y: gridY } = getGridPosition(x, y, layerOffset, scale);
+        setPaintedCells((prev) => paintCellUtil(prev, image, gridX, gridY));
     };
 
     const eraseCell = (x: number, y: number) => {
-        const localX = (x - layerOffset.x) / scale;
-        const localY = (y - layerOffset.y) / scale;
-
-        const gridX = Math.floor(localX / GRID_SIZE) * GRID_SIZE;
-        const gridY = Math.floor(localY / GRID_SIZE) * GRID_SIZE;
-
-        const exists = paintedCells.some((c) => c.x === gridX && c.y === gridY);
-        if (!exists) return;
-
-        setPaintedCells((prev) => prev.filter((c) => !(c.x === gridX && c.y === gridY)));
+        const { x: gridX, y: gridY } = getGridPosition(x, y, layerOffset, scale);
+        setPaintedCells((prev) => eraseCellUtil(prev, gridX, gridY));
     };
 
     // Optional zoom
@@ -232,16 +250,13 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
         const stage = e.target.getStage();
         if (!stage) return;
 
-        const oldScale = scale;
         const scaleBy = 1.1;
         const pointer = stage.getPointerPosition()!;
         const direction = e.evt.deltaY > 0 ? 1 / scaleBy : scaleBy;
-        const newScale = oldScale * direction;
-        setScale(newScale);
+        const result = zoomAt({ x: pointer.x, y: pointer.y }, layerOffset, scale, direction);
 
-        const newOffsetX = pointer.x - ((pointer.x - layerOffset.x) / oldScale) * newScale;
-        const newOffsetY = pointer.y - ((pointer.y - layerOffset.y) / oldScale) * newScale;
-        setLayerOffset({ x: newOffsetX, y: newOffsetY });
+        setScale(result.scale);
+        setLayerOffset(result.layerOffset);
     };
 
     return (
@@ -287,10 +302,13 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
                             maps.map((map, i) => (
                                 <div
                                     key={i}
-                                    className="Map"
+                                    className={`Map ${map.name === selectedMap?.name ? 'SelectedMap' : ''}`}
                                     onClick={() => {
+                                        if (map.name === selectedMap?.name) return;
+                                        saveCurrentMapHistory();
                                         setSelectedMap(map);
-                                        setPaintedCells([]);
+                                        setPaintedCells(map.tiles);
+                                        loadMapHistory(map.name);
                                     }}
                                 >
                                     {map.name}
@@ -351,13 +369,16 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
                 height={window.innerHeight}
                 className="Canvas"
                 style={{
-                    cursor: isPanning
-                        ? 'grabbing'
-                        : editMode
-                          ? isErasing
-                              ? 'crosshair'
-                              : 'cell'
-                          : 'default',
+                    cursor:
+                        isCtrlPressed && editMode
+                            ? 'copy'
+                            : isPanning
+                              ? 'grabbing'
+                              : editMode
+                                ? isErasing
+                                    ? 'crosshair'
+                                    : 'cell'
+                                : 'default',
                 }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}

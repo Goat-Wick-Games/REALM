@@ -46,7 +46,6 @@ export class CharacterStore {
         age: number,
         bio: string,
     ) {
-        const date = new Date().toISOString().split('T')[0];
         await this.db.execute(
             `UPDATE characters
                 SET name = ?, class = ?, race = ?, age = ?, bio = ?

@@ -144,3 +144,7 @@
 .GameScreen .MapList .Map:active {
     transform: scale(1.01);
 }
+.GameScreen .MapList .SelectedMap {
+    background-color: var(--overlay);
+    box-shadow: 0 0 10px 2px var(--btn-bg) inset;
+}
