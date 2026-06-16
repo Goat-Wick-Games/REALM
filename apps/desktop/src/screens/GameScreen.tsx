@@ -30,6 +30,8 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
     const { theme } = useTheme();
     const planks = useRef<HTMLImageElement>(null);
     const grass = useRef<HTMLImageElement>(null);
+    const water = useRef<HTMLImageElement>(null);
+    const sand = useRef<HTMLImageElement>(null);
 
     const tutorialMap = React.useMemo(() => createTutorialMap(theme), [theme]);
     const [maps, setMaps] = useState<Map[]>([tutorialMap]);
@@ -343,6 +345,26 @@ const GameScreen: React.FC<GameScreenProps> = (props) => {
                                                 ref={grass}
                                                 src={`/tiles/floor/${theme}/grass.svg`}
                                                 alt="Grass"
+                                            />
+                                        </div>
+                                        <div
+                                            className={`Sand ${image === sand.current ? 'Selected' : ''}`}
+                                            onClick={() => setImage(sand.current)}
+                                        >
+                                            <img
+                                                ref={sand}
+                                                src={`/tiles/floor/${theme}/sand.svg`}
+                                                alt="Sand"
+                                            />
+                                        </div>
+                                        <div
+                                            className={`Water ${image === water.current ? 'Selected' : ''}`}
+                                            onClick={() => setImage(water.current)}
+                                        >
+                                            <img
+                                                ref={water}
+                                                src={`/tiles/floor/${theme}/water.svg`}
+                                                alt="Water"
                                             />
                                         </div>
                                     </section>

@@ -9,7 +9,7 @@ import { useSettings } from '../context/SettingsContext';
 
 const ScreenRouter: React.FC = () => {
     const { settings, loaded } = useSettings();
-    const [screen, setScreen] = useState<Screen>('game');
+    const [screen, setScreen] = useState<Screen>('menu');
     const [showMainMenu, setShowMainMenu] = useState<boolean>();
     const [editMode, setEditMode] = useState<boolean>(false);
     const [showIntro, setShowIntro] = useState<boolean>();

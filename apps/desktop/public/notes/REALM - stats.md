@@ -74,24 +74,24 @@
 
 # CLASSES COLORS
 
-### DARK BASE - #1a1a1a
+### <div> DARK BASE <span style="background-color:#1A1A1A; color:#fffff">#1A1A1A</span></div>
 
-### LIGHT BASE - #d1d1d1
+### <div> LIGHT BASE <span style="background-color:#D1D1D1; color:#000000">#D1D1D1</span></div>
 
 - 1,642 mm
 - 0,800 mm
 
 > ## FRIENDLY
+
+> <div> barbarian <span style="background-color:#FF5555; color:#000000"> light red #FF5555</span></div>
 >
-> barbarian - light red #FF5555
+> <div> druid <span style="background-color:#99FF55; color:#000000"> light green #99FF55</span></div>
 >
-> druid - light green #99FF55
+> <div> assassin <span style="background-color:#E2E2E2; color:#000000">white #E2E2E2</span></div>
 >
-> assassin - white #E2E2E2
+> <div> hunter <span style="background-color:#D38D5F; color:#000000"> light brown #D38D5F</span></div>
 >
-> hunter - light brown #D38D5F
->
-> craftsman - light blue #80E5FF
+> <div> craftsman <span style="background-color:#80E5FF; color:#000000">​​light blue #80E5FF</span></div>
 >
 > > for both themes
 >

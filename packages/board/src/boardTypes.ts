@@ -16,4 +16,4 @@ export type Coords = {
 
 export type HistoryState = Tile[];
 
-export const GRID_SIZE = 100;
+export const GRID_SIZE = 200;

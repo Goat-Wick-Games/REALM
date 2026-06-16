@@ -117,9 +117,15 @@
     width: 100px;
     height: 100px;
 }
-.GameScreen .Selected {
-    border: 2px solid white;
+.GameScreen .Tiles section div img {
+    width: 100px;
+    height: 100px;
+}
+.GameScreen .Selected * {
+    border: 2px solid var(--panel-bg);
     border-radius: 5px;
+    padding: 0;
+    scale: 1.1;
 }
 .GameScreen .MapList {
     margin-top: 20px;

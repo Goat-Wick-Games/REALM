@@ -40,21 +40,6 @@ export const createTutorialMap = (theme: string): Map => {
         }
     }
 
-    addTile(0, 300, grass);
-    addTile(100, 300, plank);
-    addTile(200, 300, plank);
-    addTile(300, 300, plank);
-    addTile(400, 300, grass);
-    addTile(500, 300, grass);
-
-    addTile(200, 0, plank);
-    addTile(200, 100, plank);
-    addTile(200, 200, plank);
-
-    addTile(400, 100, plank);
-    addTile(400, 200, plank);
-    addTile(400, 300, plank);
-
     return {
         name: 'Tutorial',
         tiles,
