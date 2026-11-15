@@ -44,6 +44,9 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
         Magnetism: 0,
     });
 
+    const rafRef = useRef(0);
+    const pendingRef = useRef<{ x: number; y: number } | null>(null);
+
     useEffect(() => {
         bobStart.current = performance.now();
     });
@@ -90,20 +93,25 @@ const ManageCharacter: React.FC<ManageCharacterProps> = (props) => {
 
     const handleMouseMove = (e: React.MouseEvent) => {
         if (reducedMotion) return;
-        const { innerWidth, innerHeight } = window;
+        pendingRef.current = { x: e.clientX, y: e.clientY };
+        if (rafRef.current) return;
+        rafRef.current = requestAnimationFrame(() => {
+            rafRef.current = 0;
+            const p = pendingRef.current;
+            const bg = containerRef.current;
+            if (!p || !bg) return;
+            const x = (p.x / window.innerWidth - 0.5) * 2;
+            const y = (p.y / window.innerHeight - 0.5) * -2;
 
-        const x = (e.clientX / innerWidth - 0.5) * 2;
-        const y = (e.clientY / innerHeight - 0.5) * 2 * -1;
+            // update CSS variables
+            bg.style.setProperty('--wall-x', `${x * 4 * (16 / 9)}px`);
+            bg.style.setProperty('--wall-y', `${y * 4}px`);
 
-        // update CSS variables
-        const bg = containerRef.current;
-        bg?.style.setProperty('--wall-x', `${x * 4 * (16 / 9)}px`);
-        bg?.style.setProperty('--wall-y', `${y * 4}px`);
+            bg.style.setProperty('--wall-2-x', `${x * 6 * (16 / 9)}px`);
+            bg.style.setProperty('--wall-2-y', `${y * 6}px`);
 
-        bg?.style.setProperty('--wall-2-x', `${x * 6 * (16 / 9)}px`);
-        bg?.style.setProperty('--wall-2-y', `${y * 6}px`);
-
-        bg?.style.setProperty('--char-x', `${x * 6 * (16 / 9) + 200}px`);
+            bg.style.setProperty('--char-x', `${x * 6 * (16 / 9) + 200}px`);
+        });
     };
 
     useEffect(() => {

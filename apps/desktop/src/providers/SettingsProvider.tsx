@@ -6,8 +6,6 @@ const defaultSettings: Settings = {
     fastInteraction: false,
     skipIntro: false,
     renderQuality: 'normal',
-    fpsLock: true,
-    fpsLimit: 60,
     display: 'windowed',
     music: 50,
     sound: 50,

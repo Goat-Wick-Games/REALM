@@ -20,7 +20,9 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
     const { onManageCharacter, onManageRealm } = props;
     const [openMenu, setOpenMenu] = useState<menuTypes>('');
     const { theme } = useTheme();
-
+    const rafRef = useRef(0);
+    const pendingRef = useRef<{ x: number; y: number } | null>(null);
+    
     const open = (menu: menuTypes) => {
         if (openMenu === menu) close();
         else setOpenMenu(menu);
@@ -35,24 +37,28 @@ const MainMenu: React.FC<MainMenuProps> = (props) => {
 
     const handleMouseMove = (e: React.MouseEvent) => {
         if (reducedMotion) return;
-        const { innerWidth, innerHeight } = window;
+        pendingRef.current = { x: e.clientX, y: e.clientY };
+        if (rafRef.current) return;
+        rafRef.current = requestAnimationFrame(() => {
+            rafRef.current = 0;
+            const p = pendingRef.current;
+            const bg = containerRef.current;
+            if (!p || !bg) return;
+            const x = (p.x / window.innerWidth - 0.5) * -2;
+            const y = (p.y / window.innerHeight - 0.5) * -2;
 
-        const x = (e.clientX / innerWidth - 0.5) * 2 * -1;
-        const y = (e.clientY / innerHeight - 0.5) * 2 * -1;
+            bg.style.setProperty('--wall-x', `${x * 4 * (16 / 9)}px`);
+            bg.style.setProperty('--wall-y', `${y * 4}px`);
 
-        // update CSS variables
-        const bg = containerRef.current;
-        bg?.style.setProperty('--wall-x', `${x * 4 * (16 / 9)}px`);
-        bg?.style.setProperty('--wall-y', `${y * 4}px`);
+            bg.style.setProperty('--wall-2-x', `${x * 6 * (16 / 9)}px`);
+            bg.style.setProperty('--wall-2-y', `${y * 6}px`);
 
-        bg?.style.setProperty('--wall-2-x', `${x * 6 * (16 / 9)}px`);
-        bg?.style.setProperty('--wall-2-y', `${y * 6}px`);
+            bg.style.setProperty('--mid-x', `${x * 12 * (16 / 9)}px`);
+            bg.style.setProperty('--mid-y', `${y * 12}px`);
 
-        bg?.style.setProperty('--mid-x', `${x * 12 * (16 / 9)}px`);
-        bg?.style.setProperty('--mid-y', `${y * 12}px`);
-
-        bg?.style.setProperty('--front-x', `${x * 20 * (16 / 9)}px`);
-        bg?.style.setProperty('--front-y', `${y * 20}px`);
+            bg.style.setProperty('--front-x', `${x * 20 * (16 / 9)}px`);
+            bg.style.setProperty('--front-y', `${y * 20}px`);
+        });
     };
 
     return (

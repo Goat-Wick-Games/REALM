@@ -5,12 +5,12 @@ Dungeons and Dragons inspired table top RPG
 ## Version meanings
 
 Current Version
-app -> 0.5.2
+app -> 0.6.0
 storage -> 0.3.0
 network -> 0.1.0
-core -> 0.2.0
+core -> 0.3.0
 content -> 1.0.0
-board -> 0.2.0
+board -> 0.3.0
 
 Format X.YY.ZZ
 

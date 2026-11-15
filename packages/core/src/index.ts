@@ -7,3 +7,7 @@ export * from './types/races';
 export * from './types/realm';
 export * from './types/tile';
 export * from './types/trigger';
+
+/* ----------[ OVERLAYS ]---------- */
+export { createFpsMeter } from "./fps";
+export type { FpsMeter } from "./fps";

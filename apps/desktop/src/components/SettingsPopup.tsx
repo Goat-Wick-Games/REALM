@@ -8,7 +8,7 @@ type SettingsPopupProps = {
     closePopup: () => void;
 };
 
-type MenuTypes = 'video' | 'audio' | 'extras' | 'game';
+type MenuTypes = 'video' | 'audio' | 'game';
 
 const SettingsPopup: React.FC<SettingsPopupProps> = ({ closePopup }) => {
     const { settings, updateSetting } = useSettings();
@@ -30,7 +30,6 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ closePopup }) => {
                     <li onClick={() => setOpenMenu('game')}>Game</li>
                     <li onClick={() => setOpenMenu('video')}>Video</li>
                     <li onClick={() => setOpenMenu('audio')}>Audio</li>
-                    <li onClick={() => setOpenMenu('extras')}>Extras</li>
                 </nav>
 
                 {/* Game */}
@@ -88,42 +87,6 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ closePopup }) => {
                                 <option value="windowed">Windowed</option>
                             </select>
                         </div>
-                        <div className="framerate toggle">
-                            <div>Lock framerate:</div>
-                            <div>
-                                <input
-                                    type="checkbox"
-                                    checked={settings.fpsLock}
-                                    onChange={(e) => updateSetting('fpsLock', e.target.checked)}
-                                />
-                            </div>
-                        </div>
-                        <div className="framerate">
-                            <div>FPS:</div>
-                            <div>
-                                <input
-                                    disabled={!settings.fpsLock}
-                                    type="text"
-                                    value={settings.fpsLimit ?? 60}
-                                    onChange={(e) =>
-                                        updateSetting(
-                                            'fpsLimit',
-                                            normalizeInput(e.target.value, 10, 360),
-                                        )
-                                    }
-                                />
-                                <input
-                                    disabled={!settings.fpsLock}
-                                    value={settings.fpsLimit ?? 60}
-                                    type="range"
-                                    min="10"
-                                    max="360"
-                                    onChange={(e) =>
-                                        updateSetting('fpsLimit', Number(e.target.value))
-                                    }
-                                />
-                            </div>
-                        </div>
                         <div className="render-quality">
                             Render Quality:
                             <select
@@ -137,18 +100,6 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ closePopup }) => {
                                 <option value="high">High</option>
                             </select>
                         </div>
-                    </div>
-                )}
-                {
-                    // #endregion Video
-                }
-
-                {/* Extras */}
-                {
-                    // #region Extras
-                }
-                {openMenu === 'extras' && (
-                    <div className="fields">
                         <div className="theme">
                             Theme:
                             <select
@@ -189,7 +140,7 @@ const SettingsPopup: React.FC<SettingsPopupProps> = ({ closePopup }) => {
                     </div>
                 )}
                 {
-                    // #endregion Extras
+                    // #endregion Video
                 }
 
                 {/* Audio */}

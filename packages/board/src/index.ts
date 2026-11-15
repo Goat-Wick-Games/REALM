@@ -5,3 +5,4 @@ export * from './boardHistory';
 export * from './boardPainting';
 export * from './boardViewport';
 export * from './boardLogic';
+export * from './boardLayers';

@@ -4,8 +4,6 @@ type Settings = {
     skipIntro: boolean;
     // Video
     renderQuality: QualityLevels;
-    fpsLock: boolean;
-    fpsLimit: number;
     display: Display;
     // Audio
     music: number;

@@ -16,4 +16,9 @@ export default defineConfig({
             '@realm/net': path.resolve(__dirname, '../../packages/net/src'),
         },
     },
+    server: {
+        watch: {
+            ignored: ['**/src-tauri/**'],
+        },
+    },
 });
